@@ -1,0 +1,17 @@
+nav ul li{
+    cursor:pointer;
+}
+form input{
+    outline:none;
+}
+.fade-in {
+    opacity: 0.5;
+    animation: fadeIn 1s forwards;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
