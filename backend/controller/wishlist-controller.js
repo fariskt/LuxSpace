@@ -24,15 +24,18 @@ const getUserWishList = asyncErrorhandler(async (req, res) => {
 const createWishList = asyncErrorhandler(async (req, res) => {
   const { userId } = req.params;
   const { productId } = req.body;
+  
   let wishList = await WishList.findOne({ userId: userId });
   if (!wishList) {
     wishList = new WishList({ userId: userId, products: [] });
   }
-  const existWishList = wishList.products.find(product=> product.productId.toString() === productId);
+  
+  const existWishList = wishList.products.find(product=> product.productId.toString() === productId.toString());
   if(existWishList){
     return res.status(400).json({message: "Product already exists in wishlist"})
   }
-  wishList.products.push(productId);
+
+  wishList.products.push({productId});
   await wishList.save();
   return res.status(201).json({
     success: true,

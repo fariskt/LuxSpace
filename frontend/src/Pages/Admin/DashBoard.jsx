@@ -1,16 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { MdShoppingCartCheckout } from "react-icons/md";
-import {AppContext} from "../../context/AppContext";
 import { AiOutlineUser } from "react-icons/ai";
 import { MdAttachMoney } from "react-icons/md";
 import { BsCartCheck } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import {fetchDashboardDetails } from "../../features/adminSlice";
 
 const DashBoard = () => {
-  const { products, users ,orders } = useContext(AppContext);
+  const dispatch = useDispatch();
 
-  const totalRevenue = products.reduce((acc, val) => {
-    return acc + parseInt(val.price);
-  }, 0);
+  const { accessToken ,isAdminAuthenticated} = useSelector((state) => state.auth);
+  const { totalUsers,totalProducts,totalOrders ,totalIncome} = useSelector((state) => state.admin);
+
+  useEffect(() => {
+    if(accessToken && isAdminAuthenticated){
+      dispatch(fetchDashboardDetails());
+    }
+  }, []);
+ 
+
 
   return (
     <div className="relative min-h-[90vh] w-full ml-2 p-6 mt-16">
@@ -22,7 +30,7 @@ const DashBoard = () => {
           </span>
           <div className="flex flex-col gap-2">
             <h3 className="text-lg">Total Products</h3>
-            <h3 className="font-semibold text-2xl">{products.length}</h3>
+            <h3 className="font-semibold text-2xl">{totalProducts}</h3>
           </div>
         </div>
         <div className="bg-white flex items-center gap-4 p-8 rounded-md shadow-md w-fit">
@@ -31,7 +39,7 @@ const DashBoard = () => {
           </span>
           <div className="flex flex-col gap-2">
             <h3 className="text-lg">Total Revenue</h3>
-            <h3 className="font-semibold text-2xl">₹{totalRevenue}</h3>
+            <h3 className="font-semibold text-2xl">₹{totalIncome}</h3>
           </div>
         </div>
         <div className="bg-white flex items-center gap-4 p-8 rounded-md shadow-md w-fit">
@@ -40,7 +48,7 @@ const DashBoard = () => {
           </span>
           <div className="flex flex-col gap-2">
             <h3 className="text-lg">Total Orders</h3>
-            <h3 className="font-semibold text-2xl">{orders.length}</h3>
+            <h3 className="font-semibold text-2xl">{totalOrders}</h3>
           </div>
         </div>
         <div className="bg-white flex items-center gap-4 p-8 rounded-md shadow-md w-fit">
@@ -49,7 +57,7 @@ const DashBoard = () => {
           </span>
           <div className="flex flex-col gap-2">
             <h3 className="text-lg">Total Users</h3>
-            <h3 className="font-semibold text-2xl">{users.length}</h3>
+            <h3 className="font-semibold text-2xl">{totalUsers}</h3>
           </div>
         </div>
       </div>

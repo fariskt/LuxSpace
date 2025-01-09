@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get("/:userId",verifyToken, getUserWishList)
 router.post("/:userId", verifyToken, createWishList)
-router.patch("/:userId/",verifyToken, removeWishlist)
+router.patch("/:userId",verifyToken, removeWishlist)
 
 module.exports = router

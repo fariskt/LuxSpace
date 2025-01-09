@@ -1,13 +1,6 @@
 const asyncErrorhandler = require("../middleware/asyncErorHandler");
 const jwt = require("jsonwebtoken");
-const {
-  userValidationSchema,
-  loginValidationSchema,
-} = require("../helpers/joiValidation");
-const {
-  registerUserService,
-  loginUserService,
-} = require("../services/userService");
+const {registerUserService ,loginUserService} = require("../services/userService");
 const { generateAccessToken } = require("../utils/generateToken");
 const User = require("../models/userModel");
 
@@ -23,7 +16,7 @@ const registerUser = asyncErrorhandler(async (req, res) => {
 
 const loginUser = asyncErrorhandler(async (req, res) => {
   const { email, password } = req.body;
-  const { accessToken, refreshToken, user } = await loginUserService({  email, password });
+  const { accessToken, refreshToken, user } = await loginUserService({ email,password });
 
   if (user.isBlocked === true) {
     res.clearCookie("refreshToken");
@@ -35,73 +28,71 @@ const loginUser = asyncErrorhandler(async (req, res) => {
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "development",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    secure: false, // development (http)
+    maxAge: 7 * 24 * 60 * 1000, // 7 days
   });
 
- return res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "Login successful",
-    accessToken,
     data: user,
+    accessToken
   });
 });
 
-//user blocked
-const refrehTokenHandler = asyncErrorhandler(async (req, res) => {
+const getLoginedUser = asyncErrorhandler(async (req, res) => {
+  const userId = req.user.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
+  res.status(200)
+    .json({ success: true, message: "User data fetched successfully", user });
+});
+
+const refreshTokenHandler = asyncErrorhandler(async (req, res) => {
   const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
     return res
-      .status(400)
-      .json({ success: false, message: "Refresh token missing" });
+      .status(401)
+      .json({ success: false, message: "Refresh token not found" });
   }
 
-  jwt.verify(refreshToken,process.env.REFRESH_JWT_SECRET, async (err, user) => {
-      if (err) {
-        return res.status(403)
-          .json({ success: false, message: "Invalid refresh token" });
-      }
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_JWT_SECRET);
 
-      const currentUser = await User.findById(user._id);
-      if (!currentUser) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User not found" });
-      }
+    const newAccessToken = generateAccessToken({
+      id: decoded.id,
+      role: decoded.role,
+      email: decoded.email,
+    });
 
-      if (currentUser.isBlocked === true) {
-        res.clearCookie("refreshToken");
-        return res.status(403)
-          .json({
-            success: false,
-            message: "Your account has been blocked by Admin",
-          });
-      }
-
-      const newAccessToken = generateAccessToken({
-        id: user._id,
-        email: user.email,
-        role: user.role,
-      });
-
-      res.status(200).json({
-        success: true,
-        message: "Token refreshed successfully",
-        accessToken: newAccessToken,
-      });
-    }
-  );
+    res.status(200).json({ message: "Token refreshed successfully" , accessToken: newAccessToken });
+  } catch (err) {
+    return res.status(401).json({ success: false, message: "Invalid or expired refresh token"});
+  }
 });
 
 const logoutUser = asyncErrorhandler(async (req, res) => {
-  res.clearCookie("refreshToken");
-  res.status(200).json({ success: true, message: "user logout successful" });
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: false, // development
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false, //development
+  });
+
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 });
+
 
 module.exports = {
   registerUser,
   loginUser,
-  refrehTokenHandler,
+  getLoginedUser,
+  refreshTokenHandler,
   logoutUser,
 };

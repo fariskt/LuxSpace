@@ -1,45 +1,51 @@
-import React, { useContext, useState } from "react";
-import {AppContext} from "../../../context/AppContext";
+import React, { useContext, useEffect, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { AiOutlineDelete } from "react-icons/ai";
 import UserDetails from "./UserDetails";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchAllOrders,
+  fetchAllUsers,
+  fetchUserById,
+} from "../../../features/adminSlice";
+import { fetchUserOrder } from "../../../features/orderSlice";
 
 const Users = () => {
-  const { users, orders, setUsers } = useContext(AppContext);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const { users } = useSelector((state) => state.admin);
+  const [page, setPage] = useState(1);
+  const dispatch = useDispatch();
   const [showDetails, setShowDetails] = useState(false);
 
   const handleViewDetails = (user) => {
-    setSelectedUser(user);
+    dispatch(fetchUserById(user?._id));
+    dispatch(fetchUserOrder(user?._id))
     setShowDetails(true);
   };
 
-  const handleDeleteUser = async (userId) => {
-    let confirm = window.confirm("Are you sure want to delete the user");
-    if (confirm) {
-      try {
-        const deletedUser = users.filter((item) => item.id !== userId);
-        setUsers(deletedUser);
-        await axios.delete(`http://localhost:3000/users/${userId}`);
-      } catch (error) {
-        console.log("error deleting user ", error);
-      }
-    }
-  };
+  useEffect(() => {
+    dispatch(fetchAllUsers({ page: page, limit: 10 }));
+  }, [users?.length]);
 
   return (
     <>
       {showDetails ? (
-        <UserDetails
-          selectedUser={selectedUser}
-          setShowDetails={setShowDetails}
-          orders={orders}
-        />
+        <UserDetails setShowDetails={setShowDetails} />
       ) : (
         <div className="mt-24 w-[90%] ml-16 bg-white py-8 rounded-lg">
           <div className="flex justify-between items-center mb-6 px-6">
             <h1 className="text-lg">All Users List</h1>
+            <div>
+              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+                Prev
+              </button>
+              <button
+                disabled={users.length < 9}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </button>
+            </div>
           </div>
           <div className="shadow-md overflow-hidden ">
             <table className="w-full table-auto p-3">
@@ -51,9 +57,8 @@ const Users = () => {
                 </tr>
               </thead>
               <tbody className="text-gray-600 text-sm font-light">
-                {users
-                  .filter((user) => user.role === "user")
-                  .map((item, index) => (
+                {users &&
+                  users.map((item, index) => (
                     <tr
                       key={index}
                       className="border-b border-gray-200 hover:bg-gray-50"
@@ -69,7 +74,9 @@ const Users = () => {
                           <p className="text-gray-500 text-sm">{item.email}</p>
                         </div>
                       </td>
-                      <td className="py-2 px-6">{item.createdAt}</td>
+                      <td className="py-2 px-6">
+                        {item.createdAt.slice(0, 10)}
+                      </td>
                       <td className="py-2 px-6 text-center">
                         <button
                           title="view"
@@ -78,12 +85,12 @@ const Users = () => {
                         >
                           <AiOutlineEye />
                         </button>
-                        <button
-                          onClick={() => handleDeleteUser(item.id)}
+                        {/* <button
+                          onClick={() => handleDeleteUser(item._id)}
                           className="text-lg bg-red-100 rounded-lg py-2 px-4 text-red-400 hover:bg-red-500 hover:text-white"
                         >
                           <AiOutlineDelete />
-                        </button>
+                        </button> */}
                       </td>
                     </tr>
                   ))}

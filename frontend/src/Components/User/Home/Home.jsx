@@ -1,10 +1,12 @@
-import React, { useRef } from "react";
+import React, {  useRef } from "react";
 import "./Home.css";
 import Categories from "../../../Pages/User/Categories/Categories";
 import { Link } from "react-router-dom";
 
+
 const Home = () => {
   const targetRef = useRef(null);
+    
   return (
     <>
       <div className="flex justify-center items-center w-full">
@@ -21,14 +23,11 @@ const Home = () => {
             Lorem ipsum dolor quia quod asperiores laudantium eius itaque totam
             cumque
           </p>
-          <Link to='/products'> 
-          <button
-            className="ml-10 bg-black text-white py-3 px-6 mt-8 text-center"
-            >
-            SHOP NOW
-          </button>
-            </Link>
-
+          <Link to="/products">
+            <button className="ml-10 bg-black text-white py-3 px-6 mt-8 text-center">
+              SHOP NOW
+            </button>
+          </Link>
         </div>
       </div>
       <p id="product" ref={targetRef}></p>

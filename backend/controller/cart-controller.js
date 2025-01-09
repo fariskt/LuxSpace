@@ -1,9 +1,10 @@
 const asyncErrorhandler = require("../middleware/asyncErorHandler");
 const Cart = require("../models/cartModel");
+const Product = require("../models/productModel");
 
 // get cart of user
 const getCartById = asyncErrorhandler(async (req, res) => {
-  const { userId } = req.params;
+  const {userId}  = req.params;  
   const cart = await Cart.findOne({ userId: userId }).populate(
     "products.productId",
     "-stock -description -deletedAt -isDeleted"
@@ -13,19 +14,17 @@ const getCartById = asyncErrorhandler(async (req, res) => {
   }
 
   //totalamount
-  cart.totalAmount = cart.products.reduce((total, item) => {
+  const totalAmount = cart.products.reduce((total, item) => {
     const priceOfProduct = item.productId?.price || 0;
     return total + item.quantity * priceOfProduct;
   }, 0);
 
-  res
-    .status(200)
-    .json({ success: true, message: "Cart fetched successful", data: cart });
+  res.status(200).json({ success: true, message: "Cart fetched successful", data: {cart, totalAmount }});
 });
 
 //add to cart
 const addToCart = asyncErrorhandler(async (req, res) => {
-  const { userId } = req.params;
+  const  userId  = req.user.id;
   const { productId, quantity } = req.body;
 
   if (!productId) {
@@ -55,19 +54,66 @@ const addToCart = asyncErrorhandler(async (req, res) => {
 });
 
 //update cart quantity
-const updateCartQuantity = asyncErrorhandler(async (req, res) => {
-  const { userId } = req.params;
-  const { productId, quantity } = req.body;
+const increaseQuantity = asyncErrorhandler(async (req, res) => {
+  const userId = req.user.id;
+  const { productId } = req.body;
+
+  const cart = await Cart.findOne({ userId, "products.productId": productId });
+
+  if (!cart) {
+    return res.status(404).json({ message: "Cart or product not found" });
+  }
+
+  const product = cart.products.find((p) => p.productId.toString() === productId);
+  if (!product) {
+    return res.status(404).json({ message: "Product not found in cart" });
+  }
+
+  const newQuantity = product.quantity + 1;
 
   const updatedCart = await Cart.findOneAndUpdate(
     { userId, "products.productId": productId },
-    { $set: { "products.$.quantity": quantity } },
+    { $set: { "products.$.quantity": newQuantity } },
     { new: true }
   );
 
-  if (!updatedCart) {
+  const updatedProduct = updatedCart.products.find(
+    (p) => p.productId.toString() === productId
+  );
+
+  if (!updatedProduct) {
+    return res.status(500).json({ message: "Failed to retrieve updated product" });
+  }
+
+  res.status(200).json({
+    message: "Product quantity updated successfully",
+    success: true,
+    data: updatedProduct,
+  });
+});
+
+
+const decreaseQuantity = asyncErrorhandler(async (req, res) => {
+  const userId = req.user.id;
+  const { productId } = req.body;  
+
+  const cart = await Cart.findOne({ userId, "products.productId": productId });
+  if (!cart) {
     return res.status(404).json({ message: "Cart or product not found" });
   }
+
+  const product = cart.products.find((p) => p.productId.toString() === productId);
+  if (!product) {
+    return res.status(404).json({ message: "Product not found in cart" });
+  }
+
+  const newQuantity = product.quantity > 1 ? product.quantity - 1 : 1;
+
+  const updatedCart = await Cart.findOneAndUpdate(
+    { userId, "products.productId": productId },
+    { $set: { "products.$.quantity": newQuantity } },
+    { new: true }
+  );
 
   res.status(200).json({
     message: "Cart updated successfully",
@@ -76,20 +122,32 @@ const updateCartQuantity = asyncErrorhandler(async (req, res) => {
   });
 });
 
+
 //delete from cart
-const deleteCartById = asyncErrorhandler(async (req, res) => {
-  const { cartId } = req.params;
+const removeCartItem = asyncErrorhandler(async (req, res) => {
+  const userId = req.user.id
   const { productId } = req.body;
-  const updatedCart = await Cart.findByIdAndUpdate(
-    cartId,
-    { $pull: { products: { productId } } },
+
+  const cart = await Cart.findOne({ userId, "products.productId": productId });
+  if (!cart) {
+    return res.status(404).json({ message: "Cart or product not found" });
+  }
+
+  const product = cart.products.find((p) => p.productId.toString() === productId);
+  if (!product) {
+    return res.status(404).json({ message: "Product not found in cart" });
+  }
+
+  const updatedCart = await Cart.findOneAndUpdate(
+    { userId},
+    { $pull: { products: { productId: productId } } },
     { new: true }
   );
+  
   if (!updatedCart) {
     return res.status(404).json({ message: "Cart not found" });
   }
-  res
-    .status(200)
+  res.status(200)
     .json({
       success: true,
       message: "Product removed from cart",
@@ -100,6 +158,7 @@ const deleteCartById = asyncErrorhandler(async (req, res) => {
 module.exports = {
   addToCart,
   getCartById,
-  updateCartQuantity,
-  deleteCartById,
+  increaseQuantity,
+  decreaseQuantity,
+  removeCartItem,
 };

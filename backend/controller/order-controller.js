@@ -1,49 +1,58 @@
+const razorpay = require("../config/razorpay");
 const asyncErrorhandler = require("../middleware/asyncErorHandler");
 const Cart = require("../models/cartModel");
 const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
 const User = require("../models/userModel");
+const crypto = require("crypto");
 
 const createOrder = asyncErrorhandler(async (req, res) => {
-  const { userId } = req.params;
-  const { shippingAddress } = req.body;
+  const { userId, products, shippingAddress,paymentMethod, totalAmount } = req.body;
 
-  const cart = await Cart.findOne({ userId });
-  if (!cart || !cart.products || cart.products.length === 0) {
-    return res.status(400).json({ message: "Cart is empty" });
-  }
-  let totalAmount = 0;
+  const razorpayOrder = await razorpay.orders.create({
+    amount: totalAmount * 100,
+    currency: "INR",
+    receipt: `receipt_${Date.now()}`,
+  });  
 
-  for (const cartItem of cart.products) {
-    const product = await Product.findById(cartItem.productId);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    if (product.stock < cartItem.quantity) {
-      return res
-        .status(400)
-        .json({ message: `Not enough stock, Only ${product.stock} product left` });
-    }
-    product.stock -= cartItem.quantity;
-    await product.save();
-    totalAmount += product.price * cartItem.quantity;
-  }
-
-  const newOrder = new Order({
-    userId: userId,
-    products: cart.products,
+  const newOrder = await Order.create({
+    userId,
+    products,
     shippingAddress,
     totalAmount,
+    paymentMethod,
   });
-
-  const savedOrder = await newOrder.save();
-  await Cart.findOneAndUpdate({ userId }, { $set: { products: [] } });
-
+  await Cart.updateOne({ userId: userId }, { $set: { products: [] } });
   res.status(201).json({
-    status: true,
-    message: "Order placed successfully",
-    data: savedOrder,
+    success: true,
+    orderId: newOrder._id,
+    razorpayOrderId: razorpayOrder.id,
+    totalAmount,
   });
+});
+
+const verifyPayment = asyncErrorhandler(async (req, res) => {
+  const { razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
+
+  const body = razorpayOrderId + "|" + razorpayPaymentId;
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    .update(body)
+    .digest("hex");
+
+  if (expectedSignature === razorpaySignature) {
+    await Order.findOneAndUpdate(
+      { razorpayOrderId },
+      {
+        paymentStatus: "completed",
+        razorpayPaymentId,
+        razorpaySignature,
+      }
+    );
+    res.status(200).json({ success: true , message: "Payment success" });
+  } else {
+    res.status(400).json({ success: false, message: "Invalid signature" });
+  }
 });
 
 // get user order by id
@@ -54,9 +63,11 @@ const getOrderById = asyncErrorhandler(async (req, res) => {
   if (!user) {
     return res.status(404).json({ error: "user not found" });
   }
-  const order = await Order.find({ userId: userId }).populate("products.productId");
+  const order = await Order.find({ userId: userId }).populate(
+    "products.productId"
+  );
   if (order.length === 0) {
-    return res.status(404).json({ message: "No order is found for this user" });
+    return res.status(200).json({ message: "No order is found for this user" });
   }
   res.status(200).json({
     success: true,
@@ -65,22 +76,6 @@ const getOrderById = asyncErrorhandler(async (req, res) => {
   });
 });
 
-const updateOrder = asyncErrorhandler(async (req, res) => {
-  const { orderStatus, paymentStatus } = req.body;
-  const updatedOrder = await Order.findByIdAndUpdate(
-    req.params.userId,
-    {
-      orderStatus,
-      paymentStatus,
-      updatedAt: Data.now(),
-    },
-    { new: true }
-  );
-  if (!updatedOrder) {
-    return res.status(404).json({ message: "order not found" });
-  }
-  res.json(200).json({success: true, message: "Order Updated Successfully", data: updatedOrder });
-});
 
 const cancelOrder = asyncErrorhandler(async (req, res) => {
   const { orderId } = req.params;
@@ -99,6 +94,6 @@ const cancelOrder = asyncErrorhandler(async (req, res) => {
 module.exports = {
   createOrder,
   getOrderById,
-  updateOrder,
   cancelOrder,
+  verifyPayment,
 };

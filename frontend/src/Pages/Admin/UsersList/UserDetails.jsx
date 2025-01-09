@@ -1,22 +1,21 @@
-import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { blockOrUnblockUser } from "../../../features/adminSlice";
 
-const UserDetails = ({ selectedUser, setShowDetails, orders }) => {
-  const [isUserBlocked, setIsUserBlocked] = useState(selectedUser.isBlocked);
-  console.log(orders);
+const UserDetails = ({ setShowDetails }) => {
+  const dispatch = useDispatch();
+  const { loading, user } = useSelector((state) => state.admin);
+  const { userOrders } = useSelector((state) => state.order);
 
   const handleBlockUser = async () => {
-    const newStatus = !isUserBlocked;
     try {
-      await axios.patch(`http://localhost:3000/users/${selectedUser.id}`, {
-        isBlocked: newStatus,
-      });
-      setIsUserBlocked(newStatus);
+      await dispatch(blockOrUnblockUser(user?._id));
     } catch (error) {
       console.log("error blocking user ", error);
     }
   };
+
   return (
     <div className="mt-24 w-[92%] ml-16 bg-white py-8 rounded-lg shadow-md transition duration-300">
       <div className="flex justify-between items-center mb-8 px-6 border-b pb-4 border-gray-200">
@@ -37,7 +36,7 @@ const UserDetails = ({ selectedUser, setShowDetails, orders }) => {
         </button>
       </div>
 
-      {selectedUser ? (
+      {user ? (
         <div className="px-6 space-y-10">
           <div className="space-y-6">
             <h2 className="font-semibold text-xl text-gray-800">Profile</h2>
@@ -49,33 +48,34 @@ const UserDetails = ({ selectedUser, setShowDetails, orders }) => {
               />
               <div className="w-full flex justify-between px-4">
                 <div className="space-y-2">
+                  {/* <p>{user._id }</p> */}
                   <p className="text-lg font-semibold text-gray-700">
                     Name:{" "}
                     <span className="font-normal text-gray-600">
-                      {selectedUser.name}
+                      {user.name}
                     </span>
                   </p>
                   <p className="text-lg font-semibold text-gray-700">
                     Email:{" "}
                     <span className="font-normal text-gray-600">
-                      {selectedUser.email}
+                      {user.email}
                     </span>
                   </p>
                   <p className="text-lg font-semibold text-gray-700">
                     Joined Date:{" "}
                     <span className="font-normal text-gray-600">
-                      {selectedUser.createdAt}
+                      {user.createdAt.slice(0, 10)}
                     </span>
                   </p>
                 </div>
                 <div className="flex items-center gap-6">
                   <button
                     className={` ${
-                      !isUserBlocked ? "bg-red-600" : "bg-green-600"
+                      user.isBlocked ? "bg-green-600" : "bg-red-600"
                     } px-4 py-2  text-white rounded-md`}
                     onClick={handleBlockUser}
                   >
-                    {isUserBlocked ? "Unblock" : "Block"}
+                    {user.isBlocked ? "Unblock" : "Block"}
                   </button>
                 </div>
               </div>
@@ -85,9 +85,8 @@ const UserDetails = ({ selectedUser, setShowDetails, orders }) => {
           <div className="space-y-6">
             <h2 className="font-semibold text-2xl text-gray-800">Orders</h2>
             <div className="bg-white border rounded-lg p-6 shadow-lg space-y-6">
-              {orders && orders.length > 0 ? (
-                orders
-                  .filter((order) => order.userId === selectedUser.id)
+              {userOrders?.length > 0 ? (
+                userOrders.filter((orderData) => orderData.userId === user?._id)
                   .map((order, index) => (
                     <div
                       key={index}
@@ -97,11 +96,10 @@ const UserDetails = ({ selectedUser, setShowDetails, orders }) => {
                         <div className="space-y-1">
                           <p className="text-lg font-semibold text-gray-700">
                             Order ID:{" "}
-                            <span className="text-gray-600">{order.id}</span>
+                            <span className="text-gray-600">{order._id}</span>
                           </p>
                           <p className="text-gray-500">
-                            Date:{" "}
-                            {new Date(order.orderdate).toLocaleDateString()}
+                            Date: {order.createdAt.slice(0, 10)}
                           </p>
                         </div>
                         <div className="text-lg font-semibold text-blue-600">
@@ -110,27 +108,27 @@ const UserDetails = ({ selectedUser, setShowDetails, orders }) => {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-1 gap-6 bg-gray-50 p-4 rounded-lg shadow-inner">
-                        {order.items.map((item, idx) => (
+                        {order.products.map((item, idx) => (
                           <div
                             key={idx}
                             className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md"
                           >
                             <img
-                              src={item.img}
+                              src={item.productId.img}
                               alt={`Product ${item.productId}`}
                               className="w-20 h-20 object-cover rounded-md border border-gray-300"
                             />
                             <div className="space-y-1">
                               <h3 className="text-lg font-semibold text-gray-800">
-                                {item.name}{" "}
+                                {item.productId.name}{" "}
                               </h3>
                               <p className="text-gray-500">
-                                Quantity: {item.quantity}
+                                Quantity: {item.productId.quantity}
                               </p>
                               <p className="text-gray-500">
                                 Price:{" "}
                                 <span className="text-gray-600 text-sm">
-                                  ${item.price}
+                                  ${item.productId.price}
                                 </span>
                               </p>
                             </div>
@@ -143,42 +141,6 @@ const UserDetails = ({ selectedUser, setShowDetails, orders }) => {
                 <p className="text-gray-500 text-center">No orders found</p>
               )}
             </div>
-          </div>
-
-          <div className="space-y-6">
-            <h2 className="font-semibold text-xl text-gray-800">Cart</h2>
-            {selectedUser.cart && selectedUser.cart.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-4 bg-gray-50 border rounded-lg p-6 shadow-inner">
-                {selectedUser.cart.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md"
-                  >
-                    <img
-                      src={item.img}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover rounded-md border border-gray-300"
-                    />
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        {item.name}
-                      </h3>
-                      <p className="text-gray-600">
-                        Price:{" "}
-                        <span className="text-blue-600 font-semibold">
-                          ${item.price}
-                        </span>
-                      </p>
-                      <p className="text-gray-600">
-                        Color: <span className="capitalize">{item.color}</span>
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-2 text-gray-500">The cart is empty.</p>
-            )}
           </div>
         </div>
       ) : (

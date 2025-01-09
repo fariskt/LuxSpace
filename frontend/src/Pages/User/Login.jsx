@@ -1,16 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdEmail } from "react-icons/md";
 import { IoIosLock } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../slices/authSlice";
-import toast, { Toaster } from "react-hot-toast";
+import { handleLogin } from "../../features/authSlice";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated, loginError } = useSelector((state) => state.auth);
+  const { authUser, loginError, isAdminAuthenticated, isUserAuthenticated } =
+    useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,21 +25,27 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(loginUser(formData));
+      await dispatch(handleLogin(formData)).unwrap().then(()=> {
+        toast.success("Login successful")
+      }).catch((err)=> toast.error("Invalid Credintials"))
     } catch (error) {
+      toast.error("Login failed");
       console.log("Invalid password or email", error);
     }
   };
+
   useEffect(() => {
-    if (isAuthenticated) {
-      toast.success("Login Success")
-      navigate("/");
+    if (authUser) {
+      if (authUser.role === "admin" && isAdminAuthenticated) {
+        navigate("/admin");
+      } else if (authUser.role === "user" && isUserAuthenticated) {
+        navigate("/");
+      }
     }
-  }, [isAuthenticated]);
+  }, [authUser]);
 
   return (
     <div className="flex w-[70%] mt-[100px] mx-auto border-2 border-gray-400 rounded-lg justify-around py-12">
-      <Toaster position={"top-center"} reverseOrder={false} />
       <div className="flex flex-col items-center justify-center gap-5">
         <img
           className="h-[400px] "

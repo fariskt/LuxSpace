@@ -1,48 +1,46 @@
-import React, { useContext, useState } from "react";
-import {AppContext} from "../../../context/AppContext";
+import React, { useContext, useEffect, useState } from "react";
 import { BiEditAlt } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import ProductForm from "./ProductForm";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts, deleteProduct } from "../../../features/productSlice";
 
 const AdminProducts = () => {
-  const { products, setProducts } = useContext(AppContext);
+  const { loading, products } = useSelector((state) => state.products);
+  const dispatch = useDispatch();
+
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productId, setProductId] = useState(null);
   const [alertDelete, setAlertDelete] = useState(false);
+
+  const [page, setPage] = useState(1);
 
   const handleEdit = (item) => {
     setSelectedProduct(item);
     setIsOpen(true);
   };
 
-  const addProduct = (newProduct) => {
-    setProducts((prevProducts) => [...prevProducts, newProduct]);
-  };
-
-  const updateProduct = (updatedProduct) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === updatedProduct.id ? updatedProduct : product
-      )
-    );
-  };
-  const confirmDelete = (itemID) => {
+  const handleDelete = (itemID) => {
     setProductId(itemID);
     setAlertDelete(true);
   };
-  const handleDelete = async () => {
-    if (!productId) return;
+
+  const confirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/products/${productId}`);
-      const filteredProduct = products.filter((item) => item.id !== productId);
-      setProducts(filteredProduct);
-      setAlertDelete(false)
+      dispatch(deleteProduct({ productId: productId }))
+        .unwrap()
+        .then(() =>
+          dispatch(fetchProducts({ page, limit: 10, category: "all", name: "" })));
+      setAlertDelete(false);
     } catch (error) {
       console.log("error cannot delete ", error);
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchProducts({ page, limit: 10, category: "all", name: "" }));
+  }, [page, products?.length]);
 
   return (
     <>
@@ -57,7 +55,7 @@ const AdminProducts = () => {
               Cancel
             </button>
             <button
-              onClick={handleDelete}
+              onClick={confirmDelete}
               className="bg-red-600 text-white px-4 py-2 rounded mt-3 ml-8"
             >
               Yes, Delete
@@ -74,12 +72,12 @@ const AdminProducts = () => {
               setSelectedProduct(null);
               setIsOpen(true);
             }}
-            className="bg-blue-600 text-white text-md px-3 py-2 rounded-lg hover:bg-blue-500"
+            className="bg-gray-800 text-white text-md px-3 py-1 rounded-md hover:bg-gray-500"
           >
-            Add product
+            Add Product
           </button>
         </div>
-        <div className="shadow-md overflow-hidden ">
+        <div className="shadow-md overflow-hidden">
           <table className="w-full table-auto p-3">
             <thead>
               <tr className="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
@@ -91,52 +89,76 @@ const AdminProducts = () => {
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
-              {products.map((item, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-gray-200 hover:bg-gray-50"
-                >
-                  <td className="py-3 px-6 text-left flex items-center space-x-3">
-                    <h1>{index + 1}</h1>
-                    <img
-                      src={item.img}
-                      alt="product"
-                      className="w-16 h-16 rounded bg-white border border-gray-200"
-                    />
-                    <div>
-                      <p className="font-semibold">{item.name}</p>
-                      <p className="text-gray-500 text-sm">{item.category}</p>
-                    </div>
-                  </td>
-                  <td className="py-2 px-6">₹{item.price}.00</td>
-                  <td className="py-2 px-6">{item.category}</td>
-                  <td className="py-2 px-6">{item.color}</td>
-                  <td className="py-2 px-6 text-center">
-                    <button
-                      onClick={() => handleEdit(item)}
-                      className="mx-4 text-lg bg-blue-100 rounded-lg py-2 px-4 text-blue-400 hover:bg-blue-700 hover:text-white"
-                    >
-                      <BiEditAlt />
-                    </button>
-                    <button
-                      onClick={() => confirmDelete(item.id)}
-                      className="text-lg bg-red-100 rounded-lg py-2 px-4 text-red-400 hover:bg-red-500 hover:text-white"
-                    >
-                      <AiOutlineDelete />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {
+                products &&
+                products.length > 0 &&
+                products.map((item, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200 hover:bg-gray-50"
+                  >
+                    <td className="py-3 px-6 text-left flex items-center space-x-3">
+                      <img
+                        src={item.img}
+                        alt="product"
+                        className="w-16 h-16 rounded bg-white border border-gray-200"
+                      />
+                      <div>
+                        <p className="font-semibold max-w-md overflow-hidden">{item.name}</p>
+                        <p className="text-gray-500 text-sm">{item.category}</p>
+                      </div>
+                    </td>
+                    <td className="py-2 px-6">₹{item.price}.00</td>
+                    <td className="py-2 px-6">{item.category}</td>
+                    <td className="py-2 px-6">{item.color}</td>
+                    <td className="py-2 px-6 text-center">
+                      <button
+                        onClick={() => handleEdit(item)}
+                        className="mx-4 text-lg bg-blue-100 rounded-lg py-2 px-4 text-blue-400 hover:bg-blue-700 hover:text-white"
+                      >
+                        <BiEditAlt />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item._id)}
+                        className="text-lg bg-red-100 rounded-lg py-2 px-4 text-red-400 hover:bg-red-500 hover:text-white"
+                      >
+                        <AiOutlineDelete />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              }
             </tbody>
           </table>
+          {products && (
+            <div className="flex justify-center gap-4 mr-7 my-5">
+              <button
+                className={`${
+                  page === 1 ? "bg-blue-200 " : "bg-blue-500"
+                } px-8 py-2 rounded-lg`}
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+              >
+                Prev
+              </button>
+              <button
+                className={`${
+                  products?.length < 10 ? "bg-blue-200" : "bg-blue-500"
+                } px-8 py-2 rounded-lg`}
+                disabled={products?.length < 10}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
       <ProductForm
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         selectedProduct={selectedProduct}
-        addProduct={addProduct}
-        updateProduct={updateProduct}
       />
     </>
   );

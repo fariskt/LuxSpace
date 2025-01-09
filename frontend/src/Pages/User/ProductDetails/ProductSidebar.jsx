@@ -1,26 +1,23 @@
-import React, { useState } from "react";
-import { searchProducts } from "../../../slices/productSlice";
-import { useDispatch } from "react-redux";
-
-const ProductSideBar = ({ filters, handleFilterChange }) => {
-  const [searchValue, setSearchVale] = useState("");
-  const dispatch = useDispatch();
-
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentPage } from "../../../features/productSlice";
+const ProductSideBar = ({
+  filters,
+  handleFilterChange,
+  searchValue,
+  setSearchValue,
+  handleSearch,
+}) => {
+  const dispatch = useDispatch()
+  // const {currentPage} = useSelector((state)=> state.products)
   const handleInputChange = (e) => {
-    setSearchVale(e.target.value);
+    // setCurrentPage(1)
+    
+    const value = e.target.value;
+    setSearchValue(value);
+    dispatch(setCurrentPage(1)); // Reset to page 1 when a search is initiated
   };
 
-  const handleSearch = () => {
-    const categoryValue = filters.category === "all" ? "" : filters.category;
-    dispatch(
-      searchProducts({
-        name: searchValue,
-        page: 1,
-        limit: 10,
-        category: categoryValue,
-      })
-    );
-  };
   return (
     <div className="mt-14 ml-10 w-72 bg-white text-black p-6 shadow-lg rounded-lg max-h-screen">
       <div className="flex mb-5">
@@ -29,14 +26,8 @@ const ProductSideBar = ({ filters, handleFilterChange }) => {
           placeholder="Search products"
           value={searchValue}
           onChange={handleInputChange}
-          className="w-44 p-2  border border-gray-400"
+          className=" p-2 w-full rounded-md  border border-gray-400"
         />
-        <button
-          className="bg-black text-white p-1 text-xs"
-          onClick={handleSearch}
-        >
-          SEARCH
-        </button>
       </div>
       <div className="mb-4">
         <h3 className="font-semibold mb-2 text-black">Category</h3>

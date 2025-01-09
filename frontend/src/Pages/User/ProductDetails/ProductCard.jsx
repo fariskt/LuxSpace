@@ -1,9 +1,26 @@
 import React from "react";
 import { FaCartPlus } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { addToCart } from "../../../features/cartSlice";
+import toast from "react-hot-toast";
 
-const ProductCard = ({ product, addToCart }) => {
-  const { _id, img, category, name, price, color } = product;
+const ProductCard = ({ product }) => {
+  const dispatch = useDispatch();
+  const { accessToken } = useSelector((state) => state.auth);
+  const { _id, img, category, name, price } = product;
+
+  const handleAddToCart = (id) => {
+    if (accessToken) {
+      dispatch(addToCart({ productId: id, quantity: 1 }))
+        .unwrap()
+        .then(() => {
+          toast.success("Product added to the cart")
+        }).catch((err)=> toast.error(err.message))
+    } else {
+      toast.error("Please login to account");
+    }
+  };
 
   return (
     <div className="bg-white border shadow-lg rounded-lg overflow-hidden my-12">
@@ -36,7 +53,7 @@ const ProductCard = ({ product, addToCart }) => {
             </span>
           </div>
           <button
-            onClick={() => addToCart(product)}
+            onClick={() => handleAddToCart(_id)}
             className="bg-gray-900 py-2 px-4 text-white rounded-md hover:bg-gray-700 transition"
           >
             <FaCartPlus />

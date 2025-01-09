@@ -21,17 +21,18 @@ const registerUserService = async ({ name, email, password }) => {
 
 const loginUserService = async ({ email, password }) => {
   const user = await User.findOne({ email });
-  if (!user) {
+  
+  if (!user) {    
     throw new Error("Invalid email or password");
   }
   if (user.isBlocked === true) {
-    throw new Error("Your account is blocked, Please contact the owner");
+    throw new Error("Your account is blocked, Please contact the admin");
   }
-
   const passmatch = await bcrypt.compare(password, user.password);
-  if (!passmatch) {
+  if (!passmatch) {    
     throw new Error("Invalid email or password");
   }
+
   const accessToken = generateAccessToken({
     id: user._id,
     email: user.email,
@@ -42,6 +43,7 @@ const loginUserService = async ({ email, password }) => {
     email: user.email,
     role: user.role,
   });  
+
   return {
     accessToken,
     refreshToken,

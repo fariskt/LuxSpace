@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AdminNavbar from "../Navbar/AdminNavbar";
 import SideBar from "../Sidebar/SideBar";
@@ -9,8 +9,9 @@ import OrderDetails from "../../../Pages/Admin/OrderPage/OrderDetails";
 
 const AdminLayout = () => {
   const location = useLocation();
-  const [activePage, setActivePage] = useState("dashboard");
-
+  const [activePage, setActivePage] = useState(()=> {
+    return sessionStorage.getItem("activeAdminPage") || ""
+  });
   const hideNavbar = location.pathname === "/admin/login";
 
   const Components = {
@@ -20,6 +21,7 @@ const AdminLayout = () => {
     orders: <OrderDetails />
   };
   
+
 
   return (
     <div className="flex w-full" style={{ backgroundColor: "#f1f5f9" }}>

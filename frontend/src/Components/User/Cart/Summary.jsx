@@ -1,15 +1,17 @@
-import React, { useContext, useState } from "react";
-import CartPayment from "./CartPayment";
-import { CartContext } from "../../../context/CartContext";
+import React from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Summary = () => {
-  const { cart } = useContext(CartContext);
-  const [showPayment, setShowPayment] = useState(false);
+  const { totalAmount, cart } = useSelector((state) => state.cart);
+  const navigate = useNavigate();
   
-
-  const handleCartProducts = () => {
-    setShowPayment(true);
+  const handlePaymentPage = () => {
+    if (cart.length > 0) {
+      navigate("/payment");
+    }
   };
+
   return (
     <>
       <div className="summary bg-gray-300 py-6 px-6 md:w-[400px] rounded-r-md flex flex-col gap-4">
@@ -17,8 +19,8 @@ const Summary = () => {
           Summary
         </h2>
         <div className="flex justify-between my-2">
-          <p>ITEMS {cart.products?.length}</p>
-          <p className="font-bold">₹ {cart.totalAmount}.00</p>
+          <p>ITEMS {cart?.length}</p>
+          <p className="font-bold">₹ {totalAmount}.00</p>
         </div>
         <p>SHIPPING</p>
         <input
@@ -36,18 +38,15 @@ const Summary = () => {
         />
         <div className="flex justify-between my-4">
           <h4>TOTAL PRICE</h4>
-          <h4 className="font-bold">₹ {cart.totalAmount - 100}.00</h4>
+          <h4 className="font-bold">₹ {totalAmount - 100}.00</h4>
         </div>
         <button
           className="bg-black text-white p-2 mt-6"
-          onClick={handleCartProducts}
+          onClick={handlePaymentPage}
         >
           CHECKOUT
         </button>
       </div>
-      {showPayment && (
-        <CartPayment cart={cart.products} setShowPayment={setShowPayment} />
-      )}
     </>
   );
 };

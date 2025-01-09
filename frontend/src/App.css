@@ -14,4 +14,11 @@ form input{
       opacity: 1;
     }
   }
+
+  .loader-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+  
   

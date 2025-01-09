@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const orderSchema =new mongoose.Schema(
+const orderSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +30,25 @@ const orderSchema =new mongoose.Schema(
       name: { type: String, required: true },
       email: { type: String, required: true },
       phone: { type: Number, required: true },
+      address: { type: String, required: true },
       location: { type: String, required: true },
+    },
+    paymentMethod: { type: String, enum: ["COD", "online"], required: true },
+    razorpayOrderId: {
+      type: String,
+      // required: true,
+    },
+    razorpayOrderId:{
+      type: String,
+      // required: true,
+    },
+    razorpayPaymentId: {
+      type: String,
+      // required: true,
+    },
+    razorpaySignature: {
+      type: String,
+      // required: true,
     },
     totalAmount: { type: Number, required: true },
     isDeleted: { type: Boolean, default: false },
