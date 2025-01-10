@@ -19,6 +19,7 @@ const MobileBar = ({ setActivePage, activePage,setIsMobile }) => {
   };
 
   const handleActivePage = (page) => {
+    setIsMobile(false)
     setActivePage(page);
     sessionStorage.setItem("activeAdminPage", page);
   };

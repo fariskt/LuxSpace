@@ -17,7 +17,7 @@ const UserDetails = ({ setShowDetails }) => {
   };
 
   return (
-    <div className="mt-24 w-[92%] ml-16 bg-white py-8 rounded-lg shadow-md transition duration-300">
+    <div className="mt-24 md:w-[92%] md:ml-16 bg-white py-8 rounded-lg shadow-md transition duration-300">
       <div className="flex justify-between items-center mb-8 px-6 border-b pb-4 border-gray-200">
         <h1 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
           <span
@@ -40,15 +40,14 @@ const UserDetails = ({ setShowDetails }) => {
         <div className="px-6 space-y-10">
           <div className="space-y-6">
             <h2 className="font-semibold text-xl text-gray-800">Profile</h2>
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-col md:flex-rowitems-center space-x-6">
               <img
-                className="w-36 h-36 rounded-full border border-gray-300 shadow-md"
+                className="hidden md:block w-36 h-36 rounded-full border border-gray-300 shadow-md"
                 src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                 alt="User Profile"
               />
               <div className="w-full flex justify-between px-4">
                 <div className="space-y-2">
-                  {/* <p>{user._id }</p> */}
                   <p className="text-lg font-semibold text-gray-700">
                     Name:{" "}
                     <span className="font-normal text-gray-600">
@@ -92,9 +91,9 @@ const UserDetails = ({ setShowDetails }) => {
                       key={index}
                       className="border-b pb-6 mb-6 last:border-none last:pb-0 last:mb-0"
                     >
-                      <div className="flex justify-between items-center mb-4">
+                      <div className="flex flex-col md:flex-col justify-between md:items-center mb-4">
                         <div className="space-y-1">
-                          <p className="text-lg font-semibold text-gray-700">
+                          <p className="md:text-lg font-semibold text-gray-700">
                             Order ID:{" "}
                             <span className="text-gray-600">{order._id}</span>
                           </p>
