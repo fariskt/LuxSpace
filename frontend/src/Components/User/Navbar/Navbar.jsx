@@ -8,7 +8,7 @@ import { clearCart, fetchUserCart } from "../../../features/cartSlice";
 import { fetchUserWishList } from "../../../features/wishlistSlice";
 
 const Navbar = () => {
-  const { accessToken, authUser } = useSelector((state) => state.auth);
+  const { accessToken, authUser ,isUserAuthenticated} = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,13 +26,13 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    if (accessToken) {
-      dispatch(fetchUserDetails());      
+    if (accessToken && isUserAuthenticated) {
+      dispatch(fetchUserDetails());            
     }
   }, [dispatch , authUser?._id]);
 
   useEffect(() => {
-    if (cart.length === 0 && authUser?._id) {
+    if (authUser?._id) {
       dispatch(fetchUserCart(authUser?._id));
     }
     if (authUser && accessToken) {
@@ -73,7 +73,7 @@ const Navbar = () => {
             )}
           </Link>
 
-          {accessToken ? (
+          {isUserAuthenticated ? (
             <div className="relative flex flex-col items-center">
               <button
                 onClick={handleProfileToggle}

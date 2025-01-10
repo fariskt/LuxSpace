@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { authUser, loginError, isAdminAuthenticated, isUserAuthenticated } =
+  const { authUser, loginError, isAdminAuthenticated, isUserAuthenticated,loading } =
     useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -89,7 +89,7 @@ const Login = () => {
               type="submit"
               className="bg-green-400 py-3 px-5 rounded-md text-white"
             >
-              Login
+              {loading ? "loggin..." : "Login"}
             </button>
           </div>
         </form>

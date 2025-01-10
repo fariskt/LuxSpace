@@ -2,12 +2,12 @@ import React from "react";
 import { FaCartPlus } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { addToCart } from "../../../features/cartSlice";
+import { addToCart, fetchUserCart } from "../../../features/cartSlice";
 import toast from "react-hot-toast";
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
-  const { accessToken } = useSelector((state) => state.auth);
+  const { accessToken,authUser } = useSelector((state) => state.auth);
   const { _id, img, category, name, price } = product;
 
   const handleAddToCart = (id) => {
@@ -15,6 +15,7 @@ const ProductCard = ({ product }) => {
       dispatch(addToCart({ productId: id, quantity: 1 }))
         .unwrap()
         .then(() => {
+          dispatch(fetchUserCart(authUser?._id))
           toast.success("Product added to the cart")
         }).catch((err)=> toast.error(err.message))
     } else {

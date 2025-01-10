@@ -32,14 +32,16 @@ const Users = () => {
       {showDetails ? (
         <UserDetails setShowDetails={setShowDetails} />
       ) : (
-        <div className="mt-24 w-[90%] ml-16 bg-white py-8 rounded-lg">
+        <div className="mt-24 md:w-[90%] max-w-screen overflow-x-scroll md:ml-16 bg-white py-8 rounded-lg">
           <div className="flex justify-between items-center mb-6 px-6">
             <h1 className="text-lg">All Users List</h1>
             <div>
-              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+              <button className={`${page === 1 ? "bg-gray-400" : "bg-gray-600"} p-1 rounded mr-4 text-white`}
+              disabled={page === 1} onClick={() => setPage(page - 1)}>
                 Prev
               </button>
               <button
+              className={`${users.length < 10 ? "bg-gray-400" : "bg-gray-600"} p-1 rounded text-white`}
                 disabled={users.length < 9}
                 onClick={() => setPage(page + 1)}
               >
@@ -52,7 +54,7 @@ const Users = () => {
               <thead>
                 <tr className="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
                   <th className="py-3 px-6 text-left">Users Details</th>
-                  <th className="py-3 px-6 text-left">Joined Date</th>
+                  <th className="py-3 md:px-6 text-left">Joined Date</th>
                   <th className="py-3 px-6 text-center">Action</th>
                 </tr>
               </thead>
@@ -71,13 +73,13 @@ const Users = () => {
                         />
                         <div>
                           <p className="font-semibold">{item.name}</p>
-                          <p className="text-gray-500 text-sm">{item.email}</p>
+                          <p className="hidden md:block text-gray-500 text-sm">{item.email}</p>
                         </div>
                       </td>
-                      <td className="py-2 px-6">
+                      <td className="py-2 md:px-6">
                         {item.createdAt.slice(0, 10)}
                       </td>
-                      <td className="py-2 px-6 text-center">
+                      <td className="py-2 md:px-6 text-center">
                         <button
                           title="view"
                           onClick={() => handleViewDetails(item)}
@@ -85,12 +87,6 @@ const Users = () => {
                         >
                           <AiOutlineEye />
                         </button>
-                        {/* <button
-                          onClick={() => handleDeleteUser(item._id)}
-                          className="text-lg bg-red-100 rounded-lg py-2 px-4 text-red-400 hover:bg-red-500 hover:text-white"
-                        >
-                          <AiOutlineDelete />
-                        </button> */}
                       </td>
                     </tr>
                   ))}

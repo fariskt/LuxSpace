@@ -13,14 +13,14 @@ import {
 } from "../../../features/cartSlice";
 
 const Cart = () => {
-  const { cart  } = useSelector((state) => state.cart);
+  const { cart, loading  } = useSelector((state) => state.cart);
 
   const { authUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (authUser?._id) {
-      dispatch(fetchUserCart(authUser?._id));
+      dispatch(fetchUserCart(authUser?._id));      
     }
   }, [dispatch, authUser?._id]);
 
@@ -68,7 +68,7 @@ const Cart = () => {
             className="flex flex-col  gap-10 py-6 h-[400px]  md:w-[700px] overflow-y-auto"
             style={{ maxHeight: "400px" }}
           >
-            {cart?.map((item, index) => (
+            {loading ? "loading..." : cart?.map((item, index) => (
               <div
                 key={item._id}
                 className="flex flex-col md:flex-row justify-center gap-8 border-b py-4 items-center"

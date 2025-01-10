@@ -30,12 +30,18 @@ const ProductDetails = () => {
   };
 
   const handleAddToWishlist = (product) => {
-    dispatch(addToWishlist({ userId: authUser?._id, productId: product?._id }))
-      .unwrap()
-      .then(() => {
-        toast.success("Item added to the wishlist");
-      })
-      .catch(() => toast.error("item already in wishlist"));
+    if (authUser) {
+      dispatch(
+        addToWishlist({ userId: authUser?._id, productId: product?._id })
+      )
+        .unwrap()
+        .then(() => {
+          toast.success("Item added to the wishlist");
+        })
+        .catch(() => toast.error("item already in wishlist"));
+    } else {
+      toast.error("Please login to account");
+    }
   };
 
   return (
@@ -48,7 +54,9 @@ const ProductDetails = () => {
         />
       </div>
       <div className="flex flex-col md:ml-14 gap-3 md:w-[60%]">
-        <h1 className="text-xl md:text-4xl font-bold mt-8">{productById.name}</h1>
+        <h1 className="text-xl md:text-4xl font-bold mt-8">
+          {productById.name}
+        </h1>
         <div className="flex text-left gap-2 pb-4 border-b">
           <strike className="text-gray-400 text-lg font-bold">
             ₹{Math.trunc(productById.price) + 120}.00

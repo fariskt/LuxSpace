@@ -134,40 +134,40 @@ const cartSlice = createSlice({
       })
 
       // Increase Quantity
-      .addCase(increaseCartQuantity.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(increaseCartQuantity.fulfilled, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(increaseCartQuantity.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload.message;
-      })
+      // .addCase(increaseCartQuantity.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(increaseCartQuantity.fulfilled, (state, action) => {
+      //   state.loading = false;
+      // })
+      // .addCase(increaseCartQuantity.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload.message;
+      // })
 
       // Decrease Quantity
-      .addCase(decreaseCartQuantity.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(decreaseCartQuantity.fulfilled, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(decreaseCartQuantity.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload.message;
-      })
+      // .addCase(decreaseCartQuantity.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(decreaseCartQuantity.fulfilled, (state, action) => {
+      //   state.loading = false;
+      // })
+      // .addCase(decreaseCartQuantity.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload.message;
+      // })
 
       // Remove from Cart
-      .addCase(removeFromCart.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(removeFromCart.fulfilled, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(removeFromCart.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload.message;
-      });
+      // .addCase(removeFromCart.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(removeFromCart.fulfilled, (state, action) => {
+      //   state.loading = false;
+      // })
+      // .addCase(removeFromCart.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload.message;
+      // });
   },
 });
 

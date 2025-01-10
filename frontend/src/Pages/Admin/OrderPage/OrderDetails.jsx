@@ -17,8 +17,8 @@ const OrderDetails = () => {
 
 
   return (
-    <div className="container pt-28 mx-auto py-8 px-10 bg-gray-50 min-h-[90vh]">
-      <h1 className="text-4xl font-bold text-gray-900 mb-10 text-center">
+    <div className="md:container pt-28 md:mx-auto py-8 md:px-10 px-2 bg-gray-50 min-h-[90vh] w-screen overflow-x-auto">
+      <h1 className="md:text-4xl text-2xl m-4 font-bold text-gray-900 mb-10 md:text-center">
         Orders
       </h1>
 
@@ -62,7 +62,7 @@ const OrderDetails = () => {
                     <td className="px-6 py-4 border-b text-gray-700">
                       {order.shippingAddress.name}
                     </td>
-                    <td className="px-6 py-4 border-b text-gray-700">
+                    <td className="px-6 py-4 border-b text-gray-700 min-w-44 md:w-auto">
                       {order.createdAt.slice(0, 10)}
                     </td>
                     <td className="px-6 py-4 border-b text-gray-700">

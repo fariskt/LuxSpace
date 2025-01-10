@@ -72,12 +72,12 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     accessToken: localStorage.getItem("accessToken") || null,
-    isUserAuthenticated: false,
+    isUserAuthenticated: localStorage.getItem("isUserLogin") || false,
     isAdminAuthenticated:sessionStorage.getItem("isAdminLogin")|| false,
     authUser: null,
     loginError: null,
     signUpError: null,
-    loading: true,
+    loading: false,
     error: null,
   },
   reducers: {},
@@ -93,12 +93,14 @@ const authSlice = createSlice({
         const user = data
         if (user.role == "user") {
           state.isUserAuthenticated = true;
+          state.authUser = user
+          localStorage.setItem("isUserLogin",true)
         }
         if(user.role == "admin"){
           state.isAdminAuthenticated = true;
+          state.authUser = user
           sessionStorage.setItem("isAdminLogin", true);
         }
-        state.authUser = user
         state.accessToken = accessToken;
         state.loading = false;
         localStorage.setItem("accessToken", accessToken);
@@ -109,8 +111,8 @@ const authSlice = createSlice({
       })
       // register user
       .addCase(registerUser.pending, (state) => {
-        state.error = null;
         state.loading = true;
+        state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -137,8 +139,8 @@ const authSlice = createSlice({
       })
       // logout user
       .addCase(logoutUser.pending, (state) => {
-        state.error = null;
         state.loading = true;
+        state.error = null;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
@@ -148,6 +150,7 @@ const authSlice = createSlice({
         state.isUserAuthenticated = false;
         localStorage.removeItem("accessToken");
         sessionStorage.removeItem("isAdminLogin");
+        sessionStorage.removeItem("isUserLogin");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.error = action.payload;
