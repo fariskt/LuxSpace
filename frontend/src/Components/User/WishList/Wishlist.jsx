@@ -9,17 +9,17 @@ import toast from "react-hot-toast";
 
 const Wishlist = () => {
   const { wishlist } = useSelector((state) => state.wishlist);
-  const { authUser } = useSelector((state) => state.auth);
+  const { authUser,accessToken } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (authUser) {
+    if (authUser && accessToken) {
       dispatch(fetchUserWishList(authUser?._id));
     }
-  }, []);
+  }, [authUser?._id]);
 
-  const handleAddCart = (product) => {
-    dispatch(addToCart({ productId: product._id, quantity: 1 }))
+  const handleAddCart = (id) => {
+    dispatch(addToCart({ productId: id, quantity: 1 }))
       .unwrap()
       .then(() => {
         toast.success("Item added to the cart");
@@ -27,9 +27,9 @@ const Wishlist = () => {
       .catch((err) => toast.error(err.message));
   };
 
-  const handleRemove = (product) => {
+  const handleRemove = (id) => {
     dispatch(
-      removeWishlist({ userId: authUser._id, productId: product._id })
+      removeWishlist({ userId: authUser?._id, productId: id })
     ).unwrap().then(() => {
       dispatch(fetchUserWishList(authUser?._id));
     });
@@ -56,13 +56,13 @@ const Wishlist = () => {
                   <button
                     title="delete"
                     className="text-sm bg-red-500  text-white w-fit p-1"
-                    onClick={() => handleRemove(item.productId)}
+                    onClick={() => handleRemove(item._id)}
                   >
                     remove
                   </button>
                   <button
                     className="text-sm bg-green-500  text-white w-fit p-1"
-                    onClick={() => handleAddCart(item.productId)}
+                    onClick={() => handleAddCart(item.productId._id)}
                   >
                     add to cart
                   </button>

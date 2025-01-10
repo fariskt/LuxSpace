@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Summary = () => {
-  const { totalAmount, cart } = useSelector((state) => state.cart);
+  const { totalAmount, cart } = useSelector((state) => state.cart);  
   const navigate = useNavigate();
   
   const handlePaymentPage = () => {

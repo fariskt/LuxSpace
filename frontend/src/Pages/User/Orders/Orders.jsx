@@ -8,7 +8,7 @@ const Orders = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchUserOrder(authUser?._id)).unwrap();
+    dispatch(fetchUserOrder(authUser?._id));
   }, [authUser?._id]);
 
 

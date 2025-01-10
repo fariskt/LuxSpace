@@ -21,8 +21,9 @@ const createOrder = asyncErrorhandler(async (req, res) => {
     shippingAddress,
     totalAmount,
     paymentMethod,
-  });
-  await Cart.updateOne({ userId: userId }, { $set: { products: [] } });
+  });  
+  await Cart.updateOne({ userId: userId }, { $set: { items: [] } });
+  
   res.status(201).json({
     success: true,
     orderId: newOrder._id,

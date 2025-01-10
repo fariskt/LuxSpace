@@ -27,12 +27,12 @@ const Navbar = () => {
 
   useEffect(() => {
     if (accessToken) {
-      dispatch(fetchUserDetails());
+      dispatch(fetchUserDetails());      
     }
-  }, [authUser?._id]);
+  }, [dispatch , authUser?._id]);
 
   useEffect(() => {
-    if (cart.length === 0 && authUser && accessToken) {
+    if (cart.length === 0 && authUser?._id) {
       dispatch(fetchUserCart(authUser?._id));
     }
     if (authUser && accessToken) {

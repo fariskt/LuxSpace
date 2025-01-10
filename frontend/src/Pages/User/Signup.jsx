@@ -12,7 +12,7 @@ import { registerUser } from "../../features/authSlice";
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated, signUpError } = useSelector((state) => state.auth);
+  const { isUserAuthenticated, signUpError } = useSelector((state) => state.auth);
   const initialValues = {
     name: "",
     email: "",
@@ -34,17 +34,21 @@ const Signup = () => {
   const handleSubmit = async (formData) => {
     try {
       const { name, email, password } = formData;
-      dispatch(registerUser({ name, email, password }));
+      dispatch(registerUser({ name, email, password }))
+        .unwrap(() => {
+          navigate("/login");
+        })
+        .catch((err) => console.log("Registration failed"));
     } catch (error) {
       console.log("User registation failed ", error);
     }
   };
 
-  useEffect(()=> {
-    if(isAuthenticated){
-      navigate("/login")
+  useEffect(() => {
+    if (isUserAuthenticated) {
+      navigate("/login");
     }
-  },[isAuthenticated])
+  }, [isUserAuthenticated]);
 
   return (
     <div className="flex w-[70%] mt-[100px] mx-auto border-2 border-gray-400 rounded-lg justify-around">
