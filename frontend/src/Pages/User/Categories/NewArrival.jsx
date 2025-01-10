@@ -29,7 +29,7 @@ const NewArrival = () => {
 
   return (
     <>
-      <h1 className="text-2xl font-bold my-10 ml-40">NEW PRODUCTS</h1>
+      <h1 className="text-2xl font-bold my-10 text-center md:ml-40">NEW PRODUCTS</h1>
 
       <div className="grid md:grid-cols-[1fr_1fr_1fr_1fr] md:gap-10 md:[90%] w-[80%] mx-auto">
         {categoriesWithProducts?.map((item, index) => (

@@ -15,8 +15,8 @@ const Home = () => {
           alt=""
           className="absolute top-0 w-full h-screen object-cover -z-10 opacity-80"
         />
-        <div className="mt-56 flex flex-col items-center  max-w-3xl">
-          <h1 className="text-7xl">
+        <div className="mt-56 flex flex-col items-center  max-w-3xl text-center">
+          <h1 className="text-3xl md:text-7xl">
             Transform Your Space with Elegant Furniture
           </h1>
           <p className="mt-5">

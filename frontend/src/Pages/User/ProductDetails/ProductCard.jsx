@@ -23,7 +23,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="bg-white border shadow-lg rounded-lg overflow-hidden my-12">
+    <div className="bg-white border shadow-lg rounded-lg overflow-hidden md:my-8 my-8">
       <Link
         to={`/product/${_id}`}
         className="relative h-44 flex items-center justify-center p-6 border-b"

@@ -39,21 +39,21 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className="flex justify-between pt-[150px] w-[90%] mx-auto">
-      <div className="max-w-[1200px] max-h-[500px] border border-gray-500 rounded-md">
+    <div className="flex flex-col md:flex-row md:justify-between pt-[150px] w-[90%] mx-auto">
+      <div className="md:max-w-[1200px] md:max-h-[500px] border border-gray-500 rounded-md">
         <img
           src={productById?.img}
           alt="product image"
-          className="w-[1100px] h-[400px] object-contain mt-10 hover:scale-105 duration-150"
+          className="md:w-[1100px] md:h-[400px] object-contain mt-10 hover:scale-105 duration-150"
         />
       </div>
-      <div className="flex flex-col ml-14 gap-3 w-[60%]">
-        <h1 className="text-4xl font-bold">{productById.name}</h1>
-        <div className="flex items-center gap-2 pb-4 border-b">
+      <div className="flex flex-col md:ml-14 gap-3 md:w-[60%]">
+        <h1 className="text-xl md:text-4xl font-bold mt-8">{productById.name}</h1>
+        <div className="flex text-left gap-2 pb-4 border-b">
           <strike className="text-gray-400 text-lg font-bold">
             ₹{Math.trunc(productById.price) + 120}.00
           </strike>
-          <h3 className="text-xl font-bold">₹{productById.price}</h3>
+          <h3 className="text-xl font-bold text-left">₹{productById.price}</h3>
         </div>
         <p className="text-green-700">
           {productById.stock < 1 ? "No stock" : "✅ In stock"}

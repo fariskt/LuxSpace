@@ -45,18 +45,18 @@ const Login = () => {
   }, [authUser]);
 
   return (
-    <div className="flex w-[70%] mt-[100px] mx-auto border-2 border-gray-400 rounded-lg justify-around py-12">
-      <div className="flex flex-col items-center justify-center gap-5">
+    <div className="flex w-[90%] md:w-[70%] mt-[100px] mx-auto border-2 border-gray-400 rounded-lg justify-around py-12">
+      <div className="hidden md:flex md:flex-col md:items-center md:justify-center md:gap-5">
         <img
           className="h-[400px] "
           src="./login-img.jpg"
           alt="login-side-image"
         />
       </div>
-      <div className="mt-[100px] px-6">
+      <div className="mt-[100px] md:px-6">
         <h1 className="text-4xl font-extrabold">Sign in</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col w-[400px] gap-8">
-          <div className="flex border-b border-gray-400 pb-2 mt-12 gap-8 w-[400px]">
+        <form onSubmit={handleSubmit} className="flex flex-col md:w-[400px] gap-8">
+          <div className="flex border-b border-gray-400 pb-2 mt-12 gap-8 md:w-[400px]">
             <span>
               <MdEmail />
             </span>
@@ -64,13 +64,13 @@ const Login = () => {
               type="email"
               name="email"
               placeholder="Your Email"
-              className="w-[90%]"
+              className="md:w-[90%]"
               value={formData.email}
               onChange={handleChange}
             />
           </div>
 
-          <div className="flex border-b pb-2 border-gray-400 gap-8 w-[400px]">
+          <div className="flex border-b pb-2 border-gray-400 gap-8 md:w-[400px]">
             <span>
               <IoIosLock />
             </span>
@@ -78,7 +78,7 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="Password"
-              className="w-[90%]"
+              className="md:w-[90%]"
               value={formData.password}
               onChange={handleChange}
             />

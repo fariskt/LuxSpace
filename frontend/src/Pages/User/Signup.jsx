@@ -51,24 +51,24 @@ const Signup = () => {
   }, [isUserAuthenticated]);
 
   return (
-    <div className="flex w-[70%] mt-[100px] mx-auto border-2 border-gray-400 rounded-lg justify-around">
+    <div className="flex w-[90%] md:w-[70%] mt-[100px] mx-auto border-2 border-gray-400 rounded-lg justify-around">
       <div className="flex flex-col justify-center">
         <img
-          className="h-[450px] "
+          className="hidden md:block h-[450px] "
           src="./signup-img.jpg"
           alt="login-side-image"
         />
       </div>
       <div className="mt-[70px] px-6 pb-4">
-        <h1 className="text-4xl font-extrabold">Create account</h1>
+        <h1 className="text-3xl md:text-4xl font-extrabold">Create account</h1>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {() => (
-            <Form className="flex flex-col w-[400px] gap-6">
-              <div className="flex border-b border-gray-400 pb-2 mt-12 gap-6 w-[400px]">
+            <Form className="flex flex-col md:w-[400px] gap-6">
+              <div className="flex border-b border-gray-400 pb-2 mt-12 gap-6 md:w-[400px]">
                 <span>
                   <FaUser />
                 </span>
@@ -85,7 +85,7 @@ const Signup = () => {
                 component="div"
                 className="text-red-600"
               />
-              <div className="flex border-b border-gray-400 pb-2 gap-8 w-[400px]">
+              <div className="flex border-b border-gray-400 pb-2 gap-8 md:w-[400px]">
                 <span>
                   <MdEmail />
                 </span>
@@ -102,7 +102,7 @@ const Signup = () => {
                 component="div"
                 className="text-red-600"
               />
-              <div className="flex border-b pb-2 border-gray-400 gap-8 w-[400px]">
+              <div className="flex border-b pb-2 border-gray-400 gap-8 md:w-[400px]">
                 <span>
                   <IoMdLock />
                 </span>
@@ -119,7 +119,7 @@ const Signup = () => {
                 component="div"
                 className="text-red-600"
               />
-              <div className="flex border-b pb-2 border-gray-400 gap-8 w-[400px]">
+              <div className="flex border-b pb-2 border-gray-400 gap-8 md:w-[400px]">
                 <span>
                   <IoIosLock />
                 </span>

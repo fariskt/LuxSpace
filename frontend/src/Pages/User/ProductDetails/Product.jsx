@@ -6,6 +6,7 @@ import { fetchProducts, setCurrentPage } from "../../../features/productSlice";
 import Pagination from "./Pagination";
 import ProductCard from "./ProductCard";
 import { ColorRing } from "react-loader-spinner";
+import MobileSideBar from "./MobileSideBar";
 
 const Product = () => {
   const { category } = useParams();
@@ -13,6 +14,7 @@ const Product = () => {
   const dispatch = useDispatch();
 
   const [searchValue, setSearchValue] = useState("");
+  const [showMobileSideBar, setShowMobileSideBar] = useState(false);
   const [filters, setFilters] = useState({
     category: category || "all",
     price: "",
@@ -71,18 +73,54 @@ const Product = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    dispatch(setCurrentPage(1)); // Reset to page 1 when a search is initiated
+  };
+
   return (
     <div className="mt-20 min-h-screen bg-gray-100">
-      <div className="flex justify-between">
-        <ProductSidebar
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          handleFilterChange={handleFilterChange}
-          filters={filters}
-          setFilters={setFilters}
-          currentPage={currentPage}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 py-10 px-6 w-[80%]">
+      <div className="flex flex-col md:flex-row md:justify-between">
+        <div className="hidden md:block">
+          <ProductSidebar
+            searchValue={searchValue}
+            setSearchValue={setSearchValue}
+            handleFilterChange={handleFilterChange}
+            filters={filters}
+            setFilters={setFilters}
+            currentPage={currentPage}
+          />
+        </div>
+        <div className="md:hidden mt-10 ml-5 px-2 py-1 text-white flex items-center gap-4">
+          <button onClick={() => setShowMobileSideBar(!showMobileSideBar)} className="bg-black text-white w-fit p-2">
+            Filter
+          </button>
+          <div className="w-full">
+            <input
+              type="text"
+              placeholder="Search products"
+              value={searchValue}
+              onChange={handleInputChange}
+              className="p-2 w-[90%] rounded-md border border-gray-400 text-black"
+            />
+          </div>
+        </div>
+        {showMobileSideBar && (
+          <div className="md:hidden block">
+            <MobileSideBar
+              setShowMobileSideBar={setShowMobileSideBar}
+              showMobileSideBar={showMobileSideBar}
+              searchValue={searchValue}
+              setSearchValue={setSearchValue}
+              handleFilterChange={handleFilterChange}
+              filters={filters}
+              setFilters={setFilters}
+              currentPage={currentPage}
+            />
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 py-10 px-6 md:w-[80%]">
           {displayedProducts.length > 0 ? (
             <>
               <h1 className="absolute ml-4">
@@ -90,14 +128,7 @@ const Product = () => {
                 {Math.min(currentPage * 10, productLength)} of {productLength}{" "}
                 results
               </h1>
-              <div className="absolute right-7 top-24">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  productLength={productLength}
-                  handlePageChange={handlePageChange}
-                />
-              </div>
+
               {loading ? (
                 <div className="loader-container">
                   <ColorRing
@@ -126,6 +157,14 @@ const Product = () => {
             <p className="mt-5 ml-10">No products found</p>
           )}
         </div>
+      </div>
+      <div className="">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          productLength={productLength}
+          handlePageChange={handlePageChange}
+        />
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ const Wishlist = () => {
   };
 
   return (
-    <div className="mt-28 pt-4 min-h-screen w-1/2 mx-auto rounded-md border p-2">
+    <div className="mt-28 pt-4 min-h-screen md:w-1/2 mx-auto rounded-md border p-3">
       <h1 className="text-center text-2xl py-4">WishList</h1>
       {wishlist && wishlist.length
         ? wishlist.map((item, index) => (
