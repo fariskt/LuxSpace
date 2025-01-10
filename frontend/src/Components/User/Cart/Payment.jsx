@@ -4,11 +4,12 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "../../../features/cartSlice";
+import axiosInstance from "../../../api/axiosInstance";
 
 const Payment = () => {
   const { cart, totalAmount } = useSelector((state) => state.cart);
   const { authUser, accessToken } = useSelector((state) => state.auth);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [shippingMethod, setShippingMethod] = useState("COD");
   const [shippingData, setShippingData] = useState({
@@ -54,24 +55,18 @@ const Payment = () => {
       };
 
       if (shippingMethod === "COD") {
-        await axios.post(
-          "http://localhost:5000/api/users/orders/create-order",
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        dispatch(clearCart())
+        await axiosInstance.post("api/users/orders/create-order", payload, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        dispatch(clearCart());
         toast.success("Order placed successfully!.");
         setTimeout(() => {
           navigate("/");
         }, 1000);
       } else if (shippingMethod === "online") {
-        const { data } = await axios.post(
-          "http://localhost:5000/api/users/orders/create-order",
-          payload,
+        const { data } = await axiosInstance.post("/api/users/orders/create-order", payload,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -90,8 +85,8 @@ const Payment = () => {
           order_id: razorpayOrderId,
           handler: async (response) => {
             try {
-              await axios.post(
-                "http://localhost:5000/api/users/orders/verify-payment",
+              await axiosInstance.post(
+                "/api/users/orders/verify-payment",
                 {
                   razorpayPaymentId: response.razorpay_payment_id,
                   razorpayOrderId: response.razorpay_order_id,
@@ -105,7 +100,7 @@ const Payment = () => {
               );
 
               toast.success("Payment successful! Your order has been placed.");
-              dispatch(clearCart())
+              dispatch(clearCart());
               setTimeout(() => {
                 navigate("/");
               }, 1000);

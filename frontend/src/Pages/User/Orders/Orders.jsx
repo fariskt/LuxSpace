@@ -85,7 +85,6 @@ const Orders = () => {
                     ({order.products.length} Items)
                   </span>
                 </p>
-                {/* <button className="bg-orange-400 p-1" onClick={()=> handleCancelOrder(order._id)}>Cancel order</button> */}
               </div>
             </div>
           ))}

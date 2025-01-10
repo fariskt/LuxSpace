@@ -23,8 +23,6 @@ const ProductForm = ({ isOpen, setIsOpen, selectedProduct }) => {
 
   useEffect(() => {
     if (selectedProduct) {
-      console.log(selectedProduct);
-      
       setFormData(selectedProduct);
     } else {
       resetForm();
@@ -172,13 +170,23 @@ const ProductForm = ({ isOpen, setIsOpen, selectedProduct }) => {
                 <label className="block text-gray-700 font-medium mb-1">
                   Upload Image
                 </label>
+                {formData.img && typeof formData.img === "string" && (
+                  <div className="mb-2">
+                    <img
+                      src={formData.img}
+                      alt="Product Preview"
+                      className="w-16 h-14 object-cover rounded border"
+                    />
+                  </div>
+                )}
                 <input
                   type="file"
                   onChange={handleFileChange}
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
+                  required={!selectedProduct}
                 />
               </div>
+
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
                   Enter Stock
