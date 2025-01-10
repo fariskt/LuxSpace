@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Home from "./Components/User/Home/Home";
 import Categories from "./Pages/User/Categories/Categories";
 import Cart from "./Components/User/Cart/Cart";
@@ -18,7 +18,7 @@ import Wishlist from "./Components/User/WishList/Wishlist";
 function App() {
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
       <Toaster reverseOrder={false} position="top-right"/>
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -44,7 +44,7 @@ function App() {
             }
           />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </>
   );
 }
