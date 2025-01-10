@@ -17,7 +17,7 @@ const cookieParser = require("cookie-parser")
 connectDB();
 
 const corsOption = {
-    origin: 'http://localhost:4000',
+    origin: 'https://luxspace-1.onrender.com',
     credentials:true
 }
 app.use(cors(corsOption));
