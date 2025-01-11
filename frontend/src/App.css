@@ -20,5 +20,9 @@ form input{
     top: 50%;
     left: 50%;
   }
-  
+  @media screen and (max-width: 480px) {
+    .loader-container {
+      left: 40%;
+    }
+  }
   

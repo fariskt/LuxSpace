@@ -124,15 +124,6 @@ const Cart = () => {
             Your cart is empty
           </h1>
         )}
-
-        <div className="flex items-center gap-2 py-2 mt-4">
-          <span className="text-green-800 text-xl">
-            <IoIosArrowBack />
-          </span>
-          <Link to="">
-            <h2 className="cursor-pointer">Go to Shopping</h2>
-          </Link>
-        </div>
       </div>
       {cart && cart.length > 0 && <Summary cart={cart} />}
     </div>
