@@ -76,7 +76,7 @@ const Product = () => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchValue(value);
-    dispatch(setCurrentPage(1)); // Reset to page 1 when a search is initiated
+    dispatch(setCurrentPage(1));
   };
 
   return (
@@ -158,13 +158,13 @@ const Product = () => {
           )}
         </div>
       </div>
-      <div className="">
-        <Pagination
+      <div>
+       {displayedProducts.length > 0 && <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           productLength={productLength}
           handlePageChange={handlePageChange}
-        />
+        />}
       </div>
     </div>
   );

@@ -4,8 +4,8 @@ import { fetchAllOrders } from "../../../features/adminSlice";
 
 const OrderDetails = () => {
   const dispatch = useDispatch();
-  const { orders, totalOrders } = useSelector((state) => state.admin);
-  const [currentPage, setCurrentPage] = useState(1);
+  const { orders, totalOrders,loading } = useSelector((state) => state.admin);
+  const [currentPage] = useState(1);
   const [expandedOrder, setExpandedOrder] = useState(null);
 
 
@@ -23,7 +23,7 @@ const OrderDetails = () => {
       </h1>
 
 
-      {orders.length > 0 ? (
+      {loading ? "loading orders... " : orders.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border rounded-lg shadow-md">
             <thead className="bg-gray-100">

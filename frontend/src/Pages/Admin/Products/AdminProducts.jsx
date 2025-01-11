@@ -4,6 +4,7 @@ import { AiOutlineDelete } from "react-icons/ai";
 import ProductForm from "./ProductForm";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, deleteProduct } from "../../../features/productSlice";
+import { ColorRing, TailSpin } from "react-loader-spinner";
 
 const AdminProducts = () => {
   const { loading, products } = useSelector((state) => state.products);
@@ -31,7 +32,10 @@ const AdminProducts = () => {
       dispatch(deleteProduct({ productId: productId }))
         .unwrap()
         .then(() =>
-          dispatch(fetchProducts({ page, limit: 10, category: "all", name: "" })));
+          dispatch(
+            fetchProducts({ page, limit: 10, category: "all", name: "" })
+          )
+        );
       setAlertDelete(false);
     } catch (error) {
       console.log("error cannot delete ", error);
@@ -88,7 +92,20 @@ const AdminProducts = () => {
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
-              {
+              {loading ? (
+                <div className="loader-container ml-20 ">
+                  <TailSpin
+                    visible={true}
+                    height="40"
+                    width="40"
+                    color="blue"
+                    ariaLabel="tail-spin-loading"
+                    radius="1"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                </div>
+              ) : (
                 products &&
                 products.length > 0 &&
                 products.map((item, index) => (
@@ -103,7 +120,9 @@ const AdminProducts = () => {
                         className="w-16 h-16 rounded bg-white border border-gray-200"
                       />
                       <div>
-                        <p className="font-semibold md:max-w-md w-20 h-10 overflow-x-hidden overflow-y-scroll">{item.name}</p>
+                        <p className="font-semibold md:w-56 w-20 h-10 overflow-x-hidden md:overflow-x-visible md:overflow-y-hidden overflow-y-scroll">
+                          {item.name}
+                        </p>
                         <p className="text-gray-500 text-sm">{item.category}</p>
                       </div>
                     </td>
@@ -125,10 +144,10 @@ const AdminProducts = () => {
                     </td>
                   </tr>
                 ))
-              }
+              )}
             </tbody>
           </table>
-          {products && (
+          {!loading && products && (
             <div className="flex justify-center gap-4 mr-7 my-5">
               <button
                 className={`${

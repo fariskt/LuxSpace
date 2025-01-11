@@ -65,6 +65,7 @@ export const fetchUserById = createAsyncThunk(
     name:"admin",
     initialState:{
         loading:false,
+        dashboardLoading:false,
         users:[],
         orders:[],
         user:null,
@@ -78,17 +79,17 @@ export const fetchUserById = createAsyncThunk(
         buidlder
         //fetch dashboard
         .addCase(fetchDashboardDetails.pending, (state)=> {
-          state.loading = true
+          state.dashboardLoading = true
           })
           .addCase(fetchDashboardDetails.fulfilled, (state,action)=> {
-              state.loading = false
+              state.dashboardLoading = false
               state.totalIncome = action.payload.totalIncome
               state.totalUsers = action.payload.totalUsers
               state.totalOrders = action.payload.totalOrders
               state.totalProducts = action.payload.totalProducts
           })
           .addCase(fetchDashboardDetails.rejected ,(state,action)=> {
-              state.loading = false
+              state.dashboardLoading = false
               state.error = action.payload
           })
         //fetch all users

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { blockOrUnblockUser } from "../../../features/adminSlice";
+import { TailSpin } from "react-loader-spinner";
 
 const UserDetails = ({ setShowDetails }) => {
   const dispatch = useDispatch();
-  const { loading, user } = useSelector((state) => state.admin);
+  const { user ,loading} = useSelector((state) => state.admin);
   const { userOrders } = useSelector((state) => state.order);
 
   const handleBlockUser = async () => {
@@ -36,11 +37,24 @@ const UserDetails = ({ setShowDetails }) => {
         </button>
       </div>
 
-      {user ? (
+      {loading ? (
+        <div className="loader-container ml-20 ">
+          <TailSpin
+            visible={true}
+            height="40"
+            width="40"
+            color="blue"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            wrapperStyle={{}}
+            wrapperClass=""
+          />
+        </div>
+      ) : user ? (
         <div className="px-6 space-y-10">
           <div className="space-y-6">
             <h2 className="font-semibold text-xl text-gray-800">Profile</h2>
-            <div className="flex flex-col md:flex-rowitems-center space-x-6">
+            <div className="flex flex-col md:flex-row items-center space-x-6">
               <img
                 className="hidden md:block w-36 h-36 rounded-full border border-gray-300 shadow-md"
                 src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
@@ -85,7 +99,8 @@ const UserDetails = ({ setShowDetails }) => {
             <h2 className="font-semibold text-2xl text-gray-800">Orders</h2>
             <div className="bg-white border rounded-lg p-6 shadow-lg space-y-6">
               {userOrders?.length > 0 ? (
-                userOrders.filter((orderData) => orderData.userId === user?._id)
+                userOrders
+                  .filter((orderData) => orderData.userId === user?._id)
                   .map((order, index) => (
                     <div
                       key={index}

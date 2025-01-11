@@ -22,7 +22,7 @@ const SideBar = ({ setActivePage, activePage }) => {
   };
 
   return (
-    <div className="fixed top-0 h-full left-0 w-[300px] bg-gray-800 text-white flex flex-col justify-between pt-8">
+    <div className="fixed top-0 h-full left-0 z-10 w-[300px] bg-gray-800 text-white flex flex-col justify-between pt-8">
       <div>
         <div className="flex items-center">
           <img src="/weblogo.png" alt="Logo" className="h-16 ml-4" />
