@@ -235,9 +235,9 @@ const Payment = () => {
           </form>
         </div>
 
-        <div className="flex-1 md:p-4">
+        <div className="flex-1 md:p-4 mt-5 md:mt-0">
           <h2 className="text-xl font-semibold mb-4">Review Your Cart</h2>
-          <div className="flex flex-col justify-between h-56 overflow-y-auto ">
+          <div className="flex flex-col justify-between max-h-56 overflow-y-auto ">
             {cart &&
               cart.map((item) => (
                 <div
