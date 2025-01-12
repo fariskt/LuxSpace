@@ -74,7 +74,7 @@ const increaseQuantity = asyncErrorhandler(async (req, res) => {
   }
 
   // Find the product in the cart
-  const product = cart.items.find((item) => item.productId.toString() === productId);
+  const product = cart.items.find((item) => item._id.toString() === productId);
   if (!product) {
     return res.status(404).json({ message: "Product not found in cart" });
   }
