@@ -64,9 +64,7 @@ const Payment = () => {
         });
         dispatch(clearCart());
         toast.success("Order placed successfully!.");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+          navigate("/");   
       } else if (shippingMethod === "online") {
         const { data } = await axiosInstance.post(
           "/api/users/orders/create-order",
@@ -284,7 +282,7 @@ const Payment = () => {
               onClick={handlePayment}
             >
               {loading ? (
-                <span className="flex justify-center b">
+                <span className="flex justify-center">
                   <Oval
                     visible={true}
                     height="25"
