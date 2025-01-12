@@ -3,6 +3,7 @@ import { MdDelete } from "react-icons/md";
 import { IoIosArrowBack } from "react-icons/io";
 import Summary from "./Summary";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import {
   decreaseCartQuantity,
@@ -31,15 +32,27 @@ const Cart = () => {
     dispatch(removeFromCart({ productId }));
   };
 
-  const handleIncrease = (productId) => {
-    const updatedCart = cart.map((item) =>
-      item._id === productId ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    const filteredCart = updatedCart.filter((item) => item.quantity > 0);
+  
 
-    dispatch(updateCartLocally(filteredCart));
-    dispatch(increaseCartQuantity({ productId }));
-  };
+const handleIncrease = (productId) => {
+  const updatedCart = cart.map((item) => {
+    if (item._id === productId) {
+      if (item.quantity < item.productId.stock) {
+        return { ...item, quantity: item.quantity + 1 };
+      } else {
+        toast.error("Cannot add more, stock limit reached!")
+        return item;
+      }
+    }
+    return item;
+  });
+
+  const filteredCart = updatedCart.filter((item) => item.quantity > 0);
+
+  dispatch(updateCartLocally(filteredCart));
+  dispatch(increaseCartQuantity({ productId }));
+};
+
 
   const handleDecrease = (productId) => {
     const updatedCart = cart.map((item) =>
@@ -93,6 +106,7 @@ const Cart = () => {
                       {item.quantity}
                     </button>
                     <button
+disabled={item.quantity > item.productId?.stock}
                       className="py-2 px-4 font-extrabold"
                       onClick={() => handleIncrease(item._id)}
                     >
