@@ -64,9 +64,7 @@ const Payment = () => {
         });
         dispatch(clearCart());
         toast.success("Order placed successfully!.");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+          navigate("/");   
       } else if (shippingMethod === "online") {
         const { data } = await axiosInstance.post(
           "/api/users/orders/create-order",
@@ -237,9 +235,9 @@ const Payment = () => {
           </form>
         </div>
 
-        <div className="flex-1 md:p-4">
+        <div className="flex-1 md:p-4 mt-5 md:mt-0">
           <h2 className="text-xl font-semibold mb-4">Review Your Cart</h2>
-          <div className="flex flex-col justify-between h-56 overflow-y-auto ">
+          <div className="flex flex-col justify-between max-h-56 overflow-y-auto ">
             {cart &&
               cart.map((item) => (
                 <div
@@ -263,7 +261,7 @@ const Payment = () => {
               ))}
           </div>
           <div className="mt-10 md:ml-10">
-            <div className="flex md:flex-row flex-col justify-between gap-4">
+            <div className="flex flex-row justify-between gap-4">
               <span>Subtotal</span>
               <span className="font-semibold">₹{totalAmount}</span>
             </div>
@@ -284,7 +282,7 @@ const Payment = () => {
               onClick={handlePayment}
             >
               {loading ? (
-                <span className="flex justify-center b">
+                <span className="flex justify-center">
                   <Oval
                     visible={true}
                     height="25"

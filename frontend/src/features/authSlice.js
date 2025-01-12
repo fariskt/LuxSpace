@@ -154,7 +154,7 @@ const authSlice = createSlice({
         state.isUserAuthenticated = false;
         localStorage.removeItem("accessToken");
         sessionStorage.removeItem("isAdminLogin");
-        sessionStorage.removeItem("isUserLogin");
+        localStorage.removeItem("isUserLogin");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.error = action.payload;
