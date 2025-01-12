@@ -61,7 +61,7 @@ const Users = () => {
                 </tr>
               </thead>
               {loading ? (
-                <div className="loader-container ml-20 ">
+                <div className="loader-container md:ml-20 ml-4">
                   <TailSpin
                     visible={true}
                     height="40"

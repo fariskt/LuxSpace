@@ -26,7 +26,7 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    if (accessToken && isUserAuthenticated) {
+    if (isUserAuthenticated && accessToken) {
       dispatch(fetchUserDetails());            
     }
   }, [dispatch , authUser?._id]);
@@ -73,7 +73,7 @@ const Navbar = () => {
             )}
           </Link>
 
-          {isUserAuthenticated ? (
+          {authUser ? (
             <div className="relative flex flex-col items-center">
               <button
                 onClick={handleProfileToggle}

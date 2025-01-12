@@ -53,7 +53,7 @@ const Login = () => {
           alt="login-side-image"
         />
       </div>
-      <div className="mt-[100px] md:px-6">
+      <div className="mt-[100px] px-6">
         <h1 className="text-4xl font-extrabold">Sign in</h1>
         <form onSubmit={handleSubmit} className="flex flex-col md:w-[400px] gap-8">
           <div className="flex border-b border-gray-400 pb-2 mt-12 gap-8 md:w-[400px]">
@@ -99,7 +99,7 @@ const Login = () => {
             <span className="text-blue-500">create one</span>
           </Link>
         </div>
-        {loginError && <div className="text-red-600">{loginError}</div>}
+        {loginError && <div className="mt-4 text-red-600">{loginError}</div>}
       </div>
     </div>
   );

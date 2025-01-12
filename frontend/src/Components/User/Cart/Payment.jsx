@@ -5,9 +5,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "../../../features/cartSlice";
 import axiosInstance from "../../../api/axiosInstance";
+import { Oval } from "react-loader-spinner";
 
 const Payment = () => {
   const { cart, totalAmount } = useSelector((state) => state.cart);
+  const { loading } = useSelector((state) => state.order);
   const { authUser, accessToken } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -66,7 +68,9 @@ const Payment = () => {
           navigate("/");
         }, 1000);
       } else if (shippingMethod === "online") {
-        const { data } = await axiosInstance.post("/api/users/orders/create-order", payload,
+        const { data } = await axiosInstance.post(
+          "/api/users/orders/create-order",
+          payload,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -233,49 +237,70 @@ const Payment = () => {
           </form>
         </div>
 
-        <div className="flex-1 md:ml-6 mt-6 md:mt-0">
+        <div className="flex-1 md:p-4">
           <h2 className="text-xl font-semibold mb-4">Review Your Cart</h2>
-          {cart &&
-            cart.map((item) => (
-              <div className="space-y-4" key={item._id}>
-                <div className="flex justify-between bg-gray-100 p-2 rounded-md max-h-36 overflow-y-scroll">
-                  <img
-                    className="h-16 rounded-md mr-2 border border-gray-900"
-                    src={item.productId.img}
-                    alt="image"
-                  />
-                  <span className="text-sm">
-                    {" "}
-                    <b>Name:</b> {item.productId.name} <br /> <b>Qty:</b> (
-                    {item.quantity})
-                  </span>
+          <div className="flex flex-col justify-between h-56 overflow-y-auto ">
+            {cart &&
+              cart.map((item) => (
+                <div
+                  className="flex gap-2 justify-between w-full  bg-gray-100 p-2 rounded-md max-h-36"
+                  key={item._id}
+                >
+                  <div className="flex gap-5">
+                    <img
+                      className="h-16 w-16 rounded-md border border-gray-900"
+                      src={item.productId.img}
+                      alt="image"
+                    />
+                    <span className="text-sm max-h-16 overflow-hidden">
+                      {" "}
+                      <b>Name:</b> {item.productId.name} <br /> <b>Qty:</b> (
+                      {item.quantity})
+                    </span>
+                  </div>
                   <span>₹{item.productId.price}</span>
                 </div>
-                <div className="flex justify-between ">
-                  <span>Subtotal</span>
-                  <span className="font-semibold">₹{totalAmount}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className="text-gray-700">free delivery</span>
-                </div>
-                <div className="flex justify-between ">
-                  <span>Discount</span>
-                  <span className="text-gray-700">₹40</span>
-                </div>
-                <div className="flex justify-between font-semibold">
-                  <span>Grand Total</span>
-                  <span>₹{totalAmount + 50}</span>
-                </div>
-              </div>
-            ))}
-
-          <button
-            className="mt-6 w-full bg-gray-600 text-white py-3 rounded-lg shadow-lg hover:bg-gray-800 transition"
-            onClick={handlePayment}
-          >
-            Pay Now
-          </button>
+              ))}
+          </div>
+          <div className="mt-10 md:ml-10">
+            <div className="flex md:flex-row flex-col justify-between gap-4">
+              <span>Subtotal</span>
+              <span className="font-semibold">₹{totalAmount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Shipping</span>
+              <span className="text-gray-700">free delivery</span>
+            </div>
+            <div className="flex justify-between ">
+              <span>Discount</span>
+              <span className="text-gray-700">₹40</span>
+            </div>
+            <div className="flex justify-between font-semibold">
+              <span>Grand Total</span>
+              <span>₹{totalAmount + 50}</span>
+            </div>
+            <button
+              className="mt-6 w-full bg-gray-600 text-white py-3 rounded-lg shadow-lg hover:bg-gray-800 transition"
+              onClick={handlePayment}
+            >
+              {loading ? (
+                <span className="flex justify-center b">
+                  <Oval
+                    visible={true}
+                    height="25"
+                    width="40"
+                    color="black"
+                    ariaLabel="oval-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    strokeWidth="5"
+                  />
+                </span>
+              ) : (
+                "Pay Now"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

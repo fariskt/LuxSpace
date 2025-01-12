@@ -93,7 +93,7 @@ const AdminProducts = () => {
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
               {loading ? (
-                <div className="loader-container ml-20 ">
+                <div className="loader-container md:ml-20 ml-4">
                   <TailSpin
                     visible={true}
                     height="40"
@@ -120,24 +120,24 @@ const AdminProducts = () => {
                         className="w-16 h-16 rounded bg-white border border-gray-200"
                       />
                       <div>
-                        <p className="font-semibold md:w-56 w-20 h-10 overflow-x-hidden md:overflow-x-visible md:overflow-y-hidden overflow-y-scroll">
+                        <p className="font-semibold md:w-56 h-10 overflow-hidden md:overflow-x-visible md:overflow-y-hidden">
                           {item.name}
                         </p>
-                        <p className="text-gray-500 text-sm">{item.category}</p>
+                        <p className="hidden md:block text-gray-500 text-sm">{item.category}</p>
                       </div>
                     </td>
                     <td className="py-2 px-6">₹{item.price}.00</td>
                     <td className="py-2 px-6">{item.category}</td>
-                    <td className="py-2 px-6 text-center flex">
+                    <td className="py-2 md:px-6 text-center">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="mx-4 text-lg bg-blue-100 rounded-lg py-2 px-4 text-blue-400 hover:bg-blue-700 hover:text-white"
+                        className="md:mx-4 mx-2 text-lg bg-blue-100 rounded-lg py-2 md:px-4 px-2 text-blue-400 hover:bg-blue-700 hover:text-white"
                       >
                         <BiEditAlt />
                       </button>
                       <button
                         onClick={() => handleDelete(item._id)}
-                        className="text-lg bg-red-100 rounded-lg py-2 px-4 text-red-400 hover:bg-red-500 hover:text-white"
+                        className="text-lg bg-red-100 rounded-lg py-2 md:px-4 px-2 text-red-400 hover:bg-red-500 hover:text-white"
                       >
                         <AiOutlineDelete />
                       </button>

@@ -32,26 +32,25 @@ axiosInstance.interceptors.response.use(
     }
 
     // If the error status is 401 or 403 (token expired or invalid)
+    
     if (error.response?.status === 401 || error.response?.status === 403) {
-      if (error.response.data.message === "Invalid or expired token") {
+      if (error.response.data.message === "Access token required" || error.response.data.message === "Invalid or expired token") {
         originalRequest._retry = true;
 
         try {
           // Attempt to refresh the token
           const { data } = await axiosInstance.post("/api/users/refresh-token", {}, { withCredentials: true });
-
+          
           // Save the new access token
           const newAccessToken = data.accessToken;
           localStorage.setItem("accessToken", newAccessToken);
 
-          // Set the new token in the original request's headers and retry
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          // If refresh fails, log out and redirect to login
           localStorage.removeItem("accessToken");
-          window.location.href = "/login";
+          localStorage.removeItem("isUserLogin");
           return Promise.reject(refreshError);
         }
       }

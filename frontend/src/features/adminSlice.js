@@ -65,6 +65,7 @@ export const fetchUserById = createAsyncThunk(
     name:"admin",
     initialState:{
         loading:false,
+        blockLoading:false,
         dashboardLoading:false,
         users:[],
         orders:[],
@@ -133,15 +134,15 @@ export const fetchUserById = createAsyncThunk(
         })
         //block user
         .addCase(blockOrUnblockUser.pending, (state)=> {
-          state.loading = true
+          state.blockLoading = true
         })
         .addCase(blockOrUnblockUser.fulfilled , (state,action)=> {
-          state.loading = false;          
+          state.blockLoading = false;          
           state.user = action.payload
           state.error = null
         })
         .addCase(blockOrUnblockUser.rejected ,(state,action)=> {
-          state.loading = false;
+          state.blockLoading = false;
           state.error = action.payload
         })
     }

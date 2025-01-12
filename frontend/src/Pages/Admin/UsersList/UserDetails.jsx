@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { blockOrUnblockUser } from "../../../features/adminSlice";
-import { TailSpin } from "react-loader-spinner";
+import { Oval, TailSpin } from "react-loader-spinner";
 
 const UserDetails = ({ setShowDetails }) => {
   const dispatch = useDispatch();
-  const { user ,loading} = useSelector((state) => state.admin);
+  const { user, loading,blockLoading } = useSelector((state) => state.admin);
   const { userOrders } = useSelector((state) => state.order);
 
   const handleBlockUser = async () => {
@@ -88,7 +88,24 @@ const UserDetails = ({ setShowDetails }) => {
                     } px-4 py-2  text-white rounded-md`}
                     onClick={handleBlockUser}
                   >
-                    {user.isBlocked ? "Unblock" : "Block"}
+                    {blockLoading ? (
+                      <span className="flex justify-center b">
+                        <Oval
+                          visible={true}
+                          height="25"
+                          width="40"
+                          color="white"
+                          ariaLabel="oval-loading"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                          strokeWidth="5"
+                        />
+                      </span>
+                    ) : user.isBlocked ? (
+                      "Unblock"
+                    ) : (
+                      "Block"
+                    )}
                   </button>
                 </div>
               </div>
