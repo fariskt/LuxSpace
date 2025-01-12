@@ -73,7 +73,7 @@ const Navbar = () => {
             )}
           </Link>
 
-          {authUser ? (
+          {isUserAuthenticated ? (
             <div className="relative flex flex-col items-center">
               <button
                 onClick={handleProfileToggle}
