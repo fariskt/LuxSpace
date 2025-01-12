@@ -3,14 +3,14 @@ import { MdEmail } from "react-icons/md";
 import { IoIosLock } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { handleLogin } from "../../features/authSlice";
+import { clearError, handleLogin } from "../../features/authSlice";
 import toast from "react-hot-toast";
+import { Oval } from "react-loader-spinner";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { authUser, loginError, isAdminAuthenticated, isUserAuthenticated,loading } =
-    useSelector((state) => state.auth);
+  const { loginError, loading } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -25,9 +25,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(handleLogin(formData)).unwrap().then(()=> {
-        toast.success("Login successful")
-      }).catch((err)=> toast.error("Invalid Credintials"))
+      const res = await dispatch(handleLogin(formData)).unwrap();
+      const role = res.data.role;
+      if (role === "admin") {
+        navigate("/admin");
+        toast.success(res.message);
+      } else if (role === "user") {
+        toast.success(res.message);
+        navigate("/");
+      }
     } catch (error) {
       toast.error("Login failed");
       console.log("Invalid password or email", error);
@@ -35,14 +41,14 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (authUser) {
-      if (authUser.role === "admin" && isAdminAuthenticated) {
-        navigate("/admin");
-      } else if (authUser.role === "user" && isUserAuthenticated) {
-        navigate("/");
-      }
+    if (loginError) {
+      const timer = setTimeout(() => {
+        dispatch(clearError());
+      }, 5000);
+
+      return () => clearTimeout(timer);
     }
-  }, [authUser]);
+  }, [loginError, dispatch]);
 
   return (
     <div className="flex w-[90%] md:w-[70%] mt-[100px] mx-auto border-2 border-gray-400 rounded-lg justify-around py-12">
@@ -55,7 +61,10 @@ const Login = () => {
       </div>
       <div className="mt-[100px] px-6">
         <h1 className="text-4xl font-extrabold">Sign in</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col md:w-[400px] gap-8">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col md:w-[400px] gap-8"
+        >
           <div className="flex border-b border-gray-400 pb-2 mt-12 gap-8 md:w-[400px]">
             <span>
               <MdEmail />
@@ -89,7 +98,20 @@ const Login = () => {
               type="submit"
               className="bg-green-400 py-3 px-5 rounded-md text-white"
             >
-              {loading ? "loggin..." : "Login"}
+              {loading ? (
+                <Oval
+                  visible={true}
+                  height="22"
+                  width="40"
+                  color="white"
+                  ariaLabel="oval-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  strokeWidth="5"
+                />
+              ) : (
+                "Login"
+              )}
             </button>
           </div>
         </form>
@@ -99,7 +121,9 @@ const Login = () => {
             <span className="text-blue-500">create one</span>
           </Link>
         </div>
-        {loginError && <div className="mt-4 text-red-600">{loginError}</div>}
+        {loginError && (
+          <div className="absolute md:mt-0 mt-4 text-red-600">{loginError}</div>
+        )}
       </div>
     </div>
   );

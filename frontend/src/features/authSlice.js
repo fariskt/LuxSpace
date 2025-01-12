@@ -22,7 +22,7 @@ export const registerUser = createAsyncThunk(
     try {
       const response = await axiosInstance.post("/api/users/register", data);
       return response.data;
-    } catch (error) {
+    } catch (error) {      
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -80,7 +80,12 @@ const authSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearError: (state)=> {
+      state.loginError= null;
+      state.signUpError= null
+    }
+  },
   extraReducers: (builder) => {
     builder
       // login user
@@ -117,7 +122,6 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.authUser = action.payload.data
-        state.isUserAuthenticated = true
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.signUpError = action.payload;
@@ -172,4 +176,5 @@ const authSlice = createSlice({
   },
 });
 
+export const {clearError} =authSlice.actions
 export default authSlice.reducer;
