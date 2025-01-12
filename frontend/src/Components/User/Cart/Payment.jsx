@@ -261,7 +261,7 @@ const Payment = () => {
               ))}
           </div>
           <div className="mt-10 md:ml-10">
-            <div className="flex md:flex-row flex-col justify-between gap-4">
+            <div className="flex flex-row justify-between gap-4">
               <span>Subtotal</span>
               <span className="font-semibold">₹{totalAmount}</span>
             </div>
