@@ -64,7 +64,6 @@ const addToCart = asyncErrorhandler(async (req, res) => {
   });
 });
 
-// Update cart quantity: Increase
 const increaseQuantity = asyncErrorhandler(async (req, res) => {
   const userId = req.user.id;
   const { productId } = req.body;
@@ -74,11 +73,25 @@ const increaseQuantity = asyncErrorhandler(async (req, res) => {
     return res.status(404).json({ message: "Cart not found" });
   }
 
-  const product = cart.items.find((item) => item._id.toString() === productId);
+  // Find the product in the cart
+  const product = cart.items.find((item) => item.productId.toString() === productId);
   if (!product) {
     return res.status(404).json({ message: "Product not found in cart" });
   }
 
+  // Fetch the product details for stock..
+
+  const productDetails = await Product.findById(productId);
+  if (!productDetails) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+
+  // Check if increasing quantity exceeds stock
+  if (product.quantity + 1 > productDetails.stock) {
+    return res.status(400).json({ message: "Cannot increase quantity, stock limit reached" });
+  }
+
+  // Increase the quantity
   product.quantity += 1;
 
   await cart.save();
@@ -90,7 +103,7 @@ const increaseQuantity = asyncErrorhandler(async (req, res) => {
   });
 });
 
-// Update cart quantity: Decrease
+
 const decreaseQuantity = asyncErrorhandler(async (req, res) => {
   const userId = req.user.id;
   const { productId } = req.body;
