@@ -36,7 +36,7 @@ const Cart = () => {
 
 const handleIncrease = (productId) => {
   const updatedCart = cart.map((item) => {
-    if (item._id === productId) {
+    if (item.productId._id === productId) {
       if (item.quantity < item.productId.stock) {
         return { ...item, quantity: item.quantity + 1 };
       } else {
@@ -56,7 +56,7 @@ const handleIncrease = (productId) => {
 
   const handleDecrease = (productId) => {
     const updatedCart = cart.map((item) =>
-      item._id === productId ? { ...item, quantity: item.quantity - 1 } : item);
+      item.productId._id === productId ? { ...item, quantity: item.quantity - 1 } : item);
     const filteredCart = updatedCart.filter((item) => item.quantity > 0);
 
     dispatch(updateCartLocally(filteredCart));
@@ -98,7 +98,7 @@ const handleIncrease = (productId) => {
                     <button
                       className="py-2 px-4 font-extrabold border-r"
                       disabled={item.quantity === 1}
-                      onClick={() => handleDecrease(item._id)}
+                      onClick={() => handleDecrease(item.productId._id)}
                     >
                       -
                     </button>
@@ -108,7 +108,7 @@ const handleIncrease = (productId) => {
                     <button
 disabled={item.quantity > item.productId?.stock}
                       className="py-2 px-4 font-extrabold"
-                      onClick={() => handleIncrease(item._id)}
+                      onClick={() => handleIncrease(item.productId._id)}
                     >
                       +
                     </button>
