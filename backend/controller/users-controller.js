@@ -28,8 +28,8 @@ const loginUser = asyncErrorhandler(async (req, res) => {
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Automatically set based on environment
-    sameSite: "Strict",
+    secure: true,
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
@@ -79,8 +79,8 @@ const logoutUser = asyncErrorhandler(async (req, res) => {
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Automatically set
-    sameSite: "Strict",
+    secure: true,
+    sameSite: "none"
   });
 
   res.status(200).json({ success: true, message: "Logged out successfully" });
