@@ -1,0 +1,17 @@
+.traingle{
+    width: 0;
+    height: 0;
+    border-left: 700px solid transparent;
+    border-bottom: 600px solid #fff5bd;  
+    margin-top:10px;
+}
+
+@media screen and (max-width: 678px) {
+  .traingle{
+    width: 0;
+    height: 0;
+    border-left: 400px solid transparent;
+    border-bottom:380px solid #fff5bd;  
+    margin-top:10px;
+  }
+}
